@@ -386,6 +386,7 @@
         let playerFinished = false;
         let opponentFinished = false;
         let gameChannel = null;
+        let html5QrCode = null;
 
         let pairingChannel = null;
 
@@ -736,11 +737,6 @@ function verifierQrCode(texteLu) {
                 }
             }).subscribe();
         }
-if (html5QrCode && html5QrCode.isScanning) {
-    html5QrCode.stop().catch(err => console.error(err));
-}
-document.getElementById('scannerContainer').classList.add('hidden');
-document.getElementById('startScanBtn').classList.remove('hidden');
 
         async function loadLeaderboard() {
             const { data } = await supabaseClient.from('players').select('name, points').eq('is_admin', false).order('points', { ascending: false });
