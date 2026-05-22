@@ -265,11 +265,11 @@
     </div>
 
     <div id="waitingScreen" class="container hidden">
-        <h1 id="welcomeText">Bienvenue !</h1>
-        <p class="subtitle">Prêt pour les mini-jeux ?</p>
+        <h1 id="welcomeText">Willkommen !</h1>
+        <p class="subtitle">Bereit für spielen ?</p>
         <div class="info-box">
-            <p>En attente qu'un admin lance un mini-jeu...</p>
-            <p style="margin-top: 10px;"><strong id="waitingCount">0</strong> joueur(s) en attente</p>
+            <p>Warten auf den Start eines Spiels durch einen Administrator...</p>
+            <p style="margin-top: 10px;"><strong id="waitingCount">0</strong> Spieler wartet</p>
         </div>
     </div>
 
@@ -277,7 +277,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
             <div class="timer" id="timer">300s</div>
             <div style="text-align: right;">
-                <p style="color: #666; margin-bottom: 5px;">Adversaire</p>
+                <p style="color: #666; margin-bottom: 5px;">Gegner</p>
                 <p style="font-weight: bold; font-size: 18px;" id="opponentName">-</p>
             </div>
         </div>
@@ -286,30 +286,30 @@
             <p id="gameDescription">Description du défi</p>
         </div>
         <div id="lossMessage" class="loss-message hidden">
-            <h3>❌ Trop tard !</h3>
-            <p>Ton adversaire a terminé en premier.</p>
+            <h3>❌ Zu spät !</h3>
+            <p>Dein Gegner war zuerst fertig.</p>
         </div>
         <div class="player-grid">
             <div class="player-box" id="playerBox">
-                <p style="color: #666; font-size: 14px;">Toi</p>
+                <p style="color: #666; font-size: 14px;">Ich</p>
                 <p style="font-weight: bold;" id="playerNameDisplay">-</p>
-                <p style="font-size: 14px; margin-top: 5px;">Points: <strong id="playerPoints">0</strong></p>
+                <p style="font-size: 14px; margin-top: 5px;">Punkte: <strong id="playerPoints">0</strong></p>
             </div>
             <div class="player-box" id="opponentBox">
-                <p style="color: #666; font-size: 14px;">Adversaire</p>
+                <p style="color: #666; font-size: 14px;">Gegner</p>
                 <p style="font-weight: bold;" id="opponentNameDisplay">-</p>
-                <p style="font-size: 14px; margin-top: 5px;">Points: <strong id="opponentPoints">0</strong></p>
+                <p style="font-size: 14px; margin-top: 5px;">Punkte: <strong id="opponentPoints">0</strong></p>
             </div>
         </div>
-        <button class="btn-success" id="finishBtn">✓ Fini !</button>
+        <button class="btn-success" id="finishBtn">✓ Fertig !</button>
     </div>
 
     <div id="leaderboardScreen" class="container hidden">
         <div class="trophy">🏆</div>
-        <h1>Classement</h1>
-        <p class="subtitle">Les champions de la soirée !</p>
+        <h1>Rang</h1>
+        <p class="subtitle">Die Besten !</p>
         <div class="scores-container" id="scoresList"></div>
-        <button class="btn-primary" id="replayBtn" style="margin-top: 20px;">🔄 Rejouer !</button>
+        <button class="btn-primary" id="replayBtn" style="margin-top: 20px;">🔄 Widerholen !</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
