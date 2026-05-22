@@ -387,6 +387,46 @@
         let opponentFinished = false;
         let gameChannel = null;
 
+        let pairingChannel = null;
+
+        function listenForPairing() {
+            if (pairingChannel) supabaseClient.removeChannel(pairingChannel);
+            pairingChannel = supabaseClient.channel('public:players')
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'players', filter: 'id=eq.' + playerId }, async (payload) => {
+                    if (payload.new.status === 'paired') {
+                        // L'admin a lancé le jeu !
+                        const { data: pairData } = await supabaseClient.from('pairs')
+                            .select('*')
+                            .or(`player1_id.eq.${playerId},player2_id.eq.${playerId}`)
+                            .eq('status', 'active')
+                            .single();
+
+                        if (pairData) {
+                            currentPair = pairData;
+                            const isPlayer1 = currentPair.player1_id === playerId;
+                            const opponentId = isPlayer1 ? currentPair.player2_id : currentPair.player1_id;
+
+                            const { data: opData } = await supabaseClient.from('players').select('name, points').eq('id', opponentId).single();
+                            const { data: myData } = await supabaseClient.from('players').select('points').eq('id', playerId).single();
+
+                            currentGame = MINIGAMES.find(g => g.id === currentPair.game_id);
+
+                            document.getElementById('opponentName').textContent = opData.name;
+                            document.getElementById('opponentNameDisplay').textContent = opData.name;
+                            document.getElementById('playerNameDisplay').textContent = playerName;
+                            document.getElementById('playerPoints').textContent = myData.points || 0;
+                            document.getElementById('opponentPoints').textContent = opData.points || 0;
+                            document.getElementById('gameName').textContent = currentGame.name;
+                            document.getElementById('gameDescription').textContent = currentGame.description;
+
+                            showScreen('playingScreen');
+                            startTimer(currentGame.duration);
+                            subscribeToScores();
+                        }
+                    }
+                }).subscribe();
+        }
+        
         function showError(msg) {
             document.getElementById('errorContainer').innerHTML = `<div class="error-message">${msg}</div>`;
         }
@@ -589,26 +629,6 @@
                 btn.disabled = false;
             }
         }
-function subscribeToScores() {
-            if (gameChannel) supabaseClient.removeChannel(gameChannel);
-            gameChannel = supabaseClient.channel('score-' + currentPair.id).on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'scores' }, async (payload) => {
-                if (payload.new.pair_id === currentPair.id) {
-                    if (payload.new.player_id !== playerId) {
-                        opponentFinished = true;
-                        document.getElementById('opponentBox').classList.add('finished');
-                        document.getElementById('playerBox').classList.add('lost');
-                        document.getElementById('lossMessage').classList.remove('hidden');
-                        document.getElementById('finishBtn').disabled = true;
-                        document.getElementById('finishBtn').textContent = '❌ Verloren';
-                        clearInterval(timerInterval);
-                        setTimeout(() => loadLeaderboard(), 3000);
-                    } else {
-                        setTimeout(() => loadLeaderboard(), 3000);
-                    }
-                }
-            }).subscribe();
-        }
-        let html5QrCode;
 
 // Initialiser le scanner quand on clique sur le bouton
 document.getElementById('startScanBtn').addEventListener('click', () => {
@@ -707,7 +727,7 @@ function verifierQrCode(texteLu) {
                         document.getElementById('playerBox').classList.add('lost');
                         document.getElementById('lossMessage').classList.remove('hidden');
                         document.getElementById('finishBtn').disabled = true;
-                        document.getElementById('finishBtn').textContent = '❌ Perdu';
+                        document.getElementById('finishBtn').textContent = '❌ Verloren';
                         clearInterval(timerInterval);
                         setTimeout(() => loadLeaderboard(), 3000);
                     } else {
@@ -715,6 +735,7 @@ function verifierQrCode(texteLu) {
                     }
                 }
             }).subscribe();
+        }
 if (html5QrCode && html5QrCode.isScanning) {
     html5QrCode.stop().catch(err => console.error(err));
 }
