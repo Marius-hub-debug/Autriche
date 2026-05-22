@@ -741,7 +741,6 @@ if (html5QrCode && html5QrCode.isScanning) {
 }
 document.getElementById('scannerContainer').classList.add('hidden');
 document.getElementById('startScanBtn').classList.remove('hidden');
-        }
 
         async function loadLeaderboard() {
             const { data } = await supabaseClient.from('players').select('name, points').eq('is_admin', false).order('points', { ascending: false });
