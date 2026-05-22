@@ -20,6 +20,40 @@
             padding: 20px;
         }
 
+        #scannerContainer {
+            margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #ddd;
+            background: #fafafa;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        #qr-reader {
+            width: 100%;
+            border: none !important; 
+        }
+
+        #qr-reader button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 15px auto;
+            display: block;
+        }
+
+        #qr-reader__scan_region {
+            background: black; /* Fond noir pendant le chargement de la caméra */
+        }
+
+        #qr-reader__dashboard_section_csr span {
+            color: #dc2626 !important; /* Met les éventuels messages d'erreur en rouge */
+        }
         .container {
             background: white;
             border-radius: 24px;
@@ -273,7 +307,7 @@
         </div>
     </div>
 
-    <div id="playingScreen" class="container hidden">
+<div id="playingScreen" class="container hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
             <div class="timer" id="timer">300s</div>
             <div style="text-align: right;">
@@ -281,14 +315,17 @@
                 <p style="font-weight: bold; font-size: 18px;" id="opponentName">-</p>
             </div>
         </div>
+        
         <div class="game-card">
-            <h3 id="gameName">Défi</h3>
-            <p id="gameDescription">Description du défi</p>
+            <h3 id="gameName">Herausforderung</h3>
+            <p id="gameDescription">Beschreibung der Herausforderung</p>
         </div>
+        
         <div id="lossMessage" class="loss-message hidden">
             <h3>❌ Zu spät !</h3>
             <p>Dein Gegner war zuerst fertig.</p>
         </div>
+        
         <div class="player-grid">
             <div class="player-box" id="playerBox">
                 <p style="color: #666; font-size: 14px;">Ich</p>
@@ -301,7 +338,13 @@
                 <p style="font-size: 14px; margin-top: 5px;">Punkte: <strong id="opponentPoints">0</strong></p>
             </div>
         </div>
-        <button class="btn-success" id="finishBtn">✓ Fertig !</button>
+
+        <div id="scannerContainer" class="hidden">
+            <div id="qr-reader"></div>
+        </div>
+        
+        <button class="btn-primary" id="startScanBtn" style="margin-bottom: 10px;">📷 Baum scannen !</button>
+        <button class="btn-success hidden" id="finishBtn">✓ Fertig !</button>
     </div>
 
     <div id="leaderboardScreen" class="container hidden">
@@ -309,10 +352,11 @@
         <h1>Rang</h1>
         <p class="subtitle">Die Besten !</p>
         <div class="scores-container" id="scoresList"></div>
-        <button class="btn-primary" id="replayBtn" style="margin-top: 20px;">🔄 Widerholen !</button>
+        <button class="btn-primary" id="replayBtn" style="margin-top: 20px;">🔄 Wiederholen !</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <script>
         const ADMIN_PASSWORD = "M.lefol";
         const SUPABASE_URL = 'https://usyaqoqacryoyhzlvanj.supabase.co';
@@ -321,16 +365,16 @@
         let supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const MINIGAMES = [
-            { id: 1, name: "Was ist das für ein Baum? #1", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300 },
-            { id: 2, name: "Was ist das für ein Baum? #2", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300 },
-            { id: 3, name: "Was ist das für ein Baum? #3", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300 },
-            { id: 4, name: "Was ist das für ein Baum? #4", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300 },
-            { id: 5, name: "Was ist das für ein Baum? #5", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300 },
-            { id: 6, name: "Was ist das für ein Baum? #6", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300 },
-            { id: 7, name: "Was ist das für ein Baum? #7", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300 },
-            { id: 8, name: "Was ist das für ein Baum? #8", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300 },
-            { id: 9, name: "Was ist das für ein Baum? #9", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300 },
-            { id: 10, name: "Was ist das für ein Baum? #10", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300 }
+            { id: 1, name: "Was ist das für ein Baum? #1", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_01" },
+            { id: 2, name: "Was ist das für ein Baum? #2", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_02" },
+            { id: 3, name: "Was ist das für ein Baum? #3", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_03" },
+            { id: 4, name: "Was ist das für ein Baum? #4", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_04" },
+            { id: 5, name: "Was ist das für ein Baum? #5", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_05" },
+            { id: 6, name: "Was ist das für ein Baum? #6", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_06" },
+            { id: 7, name: "Was ist das für ein Baum? #7", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_07" },
+            { id: 8, name: "Was ist das für ein Baum? #8", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_08" },
+            { id: 9, name: "Was ist das für ein Baum? #9", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_09" },
+            { id: 10, name: "Was ist das für ein Baum? #10", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_10" }
         ];
 
         let playerId = null;
@@ -361,7 +405,7 @@
             const pass = document.getElementById('adminPasswordInput').value.trim();
             
             if (!playerName) {
-                showError('Entre ton nom !');
+                showError('Gib deinen Namen ein!');
                 return;
             }
 
@@ -398,7 +442,7 @@
                 }
             } catch (err) {
                 console.error(err);
-                showError('Erreur connexion');
+                showError('Verbindungsfehler');
             }
         }
 
@@ -545,40 +589,75 @@
                 btn.disabled = false;
             }
         }
-
-        function listenForPairing() {
-            supabaseClient.channel('pair-' + playerId).on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pairs' }, async (payload) => {
-                const pair = payload.new;
-                if (pair.player1_id !== playerId && pair.player2_id !== playerId) return;
-
-                currentPair = pair;
-                const oppId = pair.player1_id === playerId ? pair.player2_id : pair.player1_id;
-
-                let oppName = 'Bot 🤖';
-                let oppPts = 0;
-                if (oppId) {
-                    const { data } = await supabaseClient.from('players').select('name, points').eq('id', oppId).single();
-                    oppName = data?.name || oppName;
-                    oppPts = data?.points || 0;
+function subscribeToScores() {
+            if (gameChannel) supabaseClient.removeChannel(gameChannel);
+            gameChannel = supabaseClient.channel('score-' + currentPair.id).on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'scores' }, async (payload) => {
+                if (payload.new.pair_id === currentPair.id) {
+                    if (payload.new.player_id !== playerId) {
+                        opponentFinished = true;
+                        document.getElementById('opponentBox').classList.add('finished');
+                        document.getElementById('playerBox').classList.add('lost');
+                        document.getElementById('lossMessage').classList.remove('hidden');
+                        document.getElementById('finishBtn').disabled = true;
+                        document.getElementById('finishBtn').textContent = '❌ Verloren';
+                        clearInterval(timerInterval);
+                        setTimeout(() => loadLeaderboard(), 3000);
+                    } else {
+                        setTimeout(() => loadLeaderboard(), 3000);
+                    }
                 }
-
-                const { data: me } = await supabaseClient.from('players').select('points').eq('id', playerId).single();
-                currentGame = MINIGAMES.find(g => g.id === pair.game_id);
-
-                document.getElementById('gameName').textContent = currentGame.name;
-                document.getElementById('gameDescription').textContent = currentGame.description;
-                document.getElementById('playerNameDisplay').textContent = playerName;
-                document.getElementById('opponentNameDisplay').textContent = oppName;
-                document.getElementById('opponentName').textContent = oppName;
-                document.getElementById('playerPoints').textContent = me?.points || 0;
-                document.getElementById('opponentPoints').textContent = oppPts;
-
-                showScreen('playingScreen');
-                startTimer(currentGame.duration);
-                subscribeToScores();
             }).subscribe();
         }
+        let html5QrCode;
 
+// Initialiser le scanner quand on clique sur le bouton
+document.getElementById('startScanBtn').addEventListener('click', () => {
+    const scannerContainer = document.getElementById('scannerContainer');
+    const startBtn = document.getElementById('startScanBtn');
+    
+    scannerContainer.classList.remove('hidden');
+    startBtn.classList.add('hidden');
+
+    // Cibler la div qr-reader
+    html5QrCode = new Html5Qrcode("qr-reader");
+
+    html5QrCode.start(
+        { facingMode: "environment" }, // Force la caméra arrière du téléphone
+        {
+            fps: 10,
+            qrbox: { width: 250, height: 250 }
+        },
+        (decodedText, decodedResult) => {
+            // Cette fonction se déclenche QUAND un QR code est lu
+            verifierQrCode(decodedText);
+        },
+        (errorMessage) => {
+            // Ignore les erreurs de lecture en continu (la caméra cherche en boucle)
+        }
+    ).catch((err) => {
+        console.error("Erreur d'accès à la caméra", err);
+        showError("Impossible d'accéder à la caméra. Vérifie les permissions.");
+    });
+});
+
+function verifierQrCode(texteLu) {
+    if (texteLu === currentGame.qrCodeExpected) {
+        // C'est le bon arbre !
+        
+        // 1. Arrêter la caméra
+        html5QrCode.stop().then(() => {
+            document.getElementById('scannerContainer').classList.add('hidden');
+            
+            // 2. Déclencher ta logique de victoire existante
+            handleFinish();
+            
+            alert("Bravo! Das ist der richtige Baum!");
+        });
+    } else {
+        // Mauvais arbre scanné
+        alert("Falscher Baum!");
+    }
+}
         function startTimer(duration) {
             let time = duration;
             document.getElementById('timer').textContent = `${time}s`;
@@ -595,7 +674,7 @@
             playerFinished = true;
 
             document.getElementById('finishBtn').disabled = true;
-            document.getElementById('finishBtn').textContent = '✓ Terminé !';
+            document.getElementById('finishBtn').textContent = '✓ Fertig!';
             document.getElementById('playerBox').classList.add('finished');
 
             const time = parseInt(document.getElementById('timer').textContent);
@@ -636,6 +715,11 @@
                     }
                 }
             }).subscribe();
+if (html5QrCode && html5QrCode.isScanning) {
+    html5QrCode.stop().catch(err => console.error(err));
+}
+document.getElementById('scannerContainer').classList.add('hidden');
+document.getElementById('startScanBtn').classList.remove('hidden');
         }
 
         async function loadLeaderboard() {
@@ -644,7 +728,7 @@
             list.innerHTML = '';
 
             if (!data || data.length === 0) {
-                list.innerHTML = '<p style="text-align: center; color: #666;">Aucun score</p>';
+                list.innerHTML = '<p style="text-align: center; color: #666;">Noch keine Ergebnisse</p>';
             } else {
                 data.forEach((p, i) => {
                     const div = document.createElement('div');
@@ -665,7 +749,7 @@
             showScreen('leaderboardScreen');
         }
 
-        async function resetGame() {
+async function resetGame() {
             await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId);
             currentPair = null;
             currentGame = null;
@@ -675,12 +759,19 @@
             document.getElementById('opponentBox').classList.remove('finished');
             document.getElementById('lossMessage').classList.add('hidden');
             document.getElementById('finishBtn').disabled = false;
-            document.getElementById('finishBtn').textContent = '✓ Fini !';
+            document.getElementById('finishBtn').textContent = '✓ Fertig!';
+            
+            // SÉCURITÉ : S'assurer que le scanner est bien caché/arrêté pour la prochaine partie
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().catch(err => console.error(err));
+            }
+            document.getElementById('scannerContainer').classList.add('hidden');
+            document.getElementById('startScanBtn').classList.remove('hidden');
+
             showScreen('waitingScreen');
             updateWaitingCount();
             listenForPairing();
         }
-
         window.addEventListener('beforeunload', async () => {
             if (playerId) await supabaseClient.from('players').delete().eq('id', playerId);
         });
@@ -696,9 +787,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
