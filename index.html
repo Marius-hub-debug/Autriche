@@ -367,16 +367,16 @@
         let supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const MINIGAMES = [
-            { id: 1, name: "Was ist das für ein Baum? #1", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_01" },
-            { id: 2, name: "Was ist das für ein Baum? #2", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_02" },
-            { id: 3, name: "Was ist das für ein Baum? #3", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_03" },
-            { id: 4, name: "Was ist das für ein Baum? #4", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_04" },
-            { id: 5, name: "Was ist das für ein Baum? #5", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_05" },
-            { id: 6, name: "Was ist das für ein Baum? #6", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_06" },
-            { id: 7, name: "Was ist das für ein Baum? #7", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_07" },
-            { id: 8, name: "Was ist das für ein Baum? #8", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_08" },
-            { id: 9, name: "Was ist das für ein Baum? #9", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_09" },
-            { id: 10, name: "Was ist das für ein Baum? #10", description: "Sie müssen den QR-Code an diesem Baum finden und fotografieren.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_10" }
+            { id: 1, name: "Der Mammutbaum (Sequoiadendron giganteum)", description: "Ein sehr großer und alter Baum aus Amerika.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_01" },
+            { id: 2, name: "Die Himalaya-Zeder (Cedrus deodara)", description: "Ein schöner Nadelbaum mit langen, weichen Ästen", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_02" },
+            { id: 3, name: "Die Atlas-Zeder (Cedrus atlantica)", description: "Ein starker Baum aus Nordafrika.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_03" },
+            { id: 4, name: "Der Ginkgo (Ginkgo biloba)", description: "Ein sehr alter Baum mit gelben Blättern im Herbst.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_04" },
+            { id: 5, name: "Die Sumpfzypresse (Taxodium distichum)", description: "Ein Baum, der Wasser und feuchte Orte mag.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_05" },
+            { id: 6, name: "Die Steineiche (Quercus ilex)", description: "Eine immergrüne Eiche mit kleinen dunklen Blättern.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_06" },
+            { id: 7, name: "Die Pyramideneiche (Quercus robur fastigiata)", description: "Eine hohe und schmale Eiche.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_07" },
+            { id: 8, name: "Die Platane (Platanus × hispanica)", description: "Ein großer Schattenbaum in vielen Parks.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_08" },
+            { id: 9, name: "Der Schnurbaum (Styphnolobium japonicum)", description: "Ein dekorativer Baum mit kleinen weißen Blüten.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_09" },
+            { id: 10, name: "Der Kakibaum (Diospyros kaki)", description: "Ein Baum mit orangefarbenen Früchten im Herbst.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_10" }
         ];
 
         let playerId = null;
