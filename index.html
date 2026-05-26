@@ -1,807 +1,977 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎉 Mini-Jeux pour les Autrichiens</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --red: #ED2939;
+            --red-dark: #A50000;
+            --white: #FFFFFF;
+            --bg: #F5F0EB;
+            --card: #FFFFFF;
+            --text: #1a1a1a;
+            --muted: #666;
+            --border: #E0D8D0;
+            --success: #1a7a4a;
+            --success-light: #d4f0e0;
+            --danger-light: #fde8e8;
+            --gold: #c9a227;
+            --gold-light: #fef3c7;
+            --silver: #8a9ab5;
+            --silver-light: #e8ecf4;
+            --bronze: #b5651d;
+            --bronze-light: #fdebd0;
         }
- 
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'DM Sans', sans-serif;
             min-height: 100vh;
+            background: var(--bg);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(237,41,57,0.06) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(165,0,0,0.04) 0%, transparent 50%);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
- 
-        #scannerContainer {
-            margin-bottom: 20px;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid #ddd;
-            background: #fafafa;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
-        }
- 
-        #qr-reader {
-            width: 100%;
-            border: none !important; 
-        }
- 
-        #qr-reader button {
-            background: linear-gradient(135deg, #ED2939 0%, #A50000 100%);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 15px auto;
-            display: block;
-        }
- 
-        #qr-reader__scan_region {
-            background: black;
-        }
- 
-        #qr-reader__dashboard_section_csr span {
-            color: #dc2626 !important;
-        }
+
+        /* ── CONTAINER ── */
         .container {
-            background: white;
+            background: var(--card);
             border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 20px 50px rgba(0,0,0,0.10);
             padding: 40px;
-            max-width: 600px;
+            max-width: 620px;
             width: 100%;
+            border: 1px solid var(--border);
         }
- 
-        .bg-gradient-austria { background: linear-gradient(135deg, #ED2939 0%, #A50000 100%); }
- 
-        .icon-box {
-            display: inline-block;
-            padding: 20px;
-            background: linear-gradient(135deg, #ED2939 0%, #A50000 100%);
-            border-radius: 50%;
-            margin-bottom: 20px;
-        }
- 
+
+        /* ── TYPOGRAPHY ── */
         h1 {
-            font-size: 32px;
-            color: #333;
-            margin-bottom: 10px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 42px;
+            letter-spacing: 1px;
+            color: var(--text);
             text-align: center;
+            margin-bottom: 6px;
         }
- 
         .subtitle {
-            color: #666;
+            color: var(--muted);
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 28px;
+            font-size: 15px;
         }
- 
+
+        /* ── ICON BOX ── */
+        .icon-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 24px rgba(237,41,57,0.3);
+        }
+
+        /* ── INPUTS ── */
         input {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #ddd;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
             border-radius: 12px;
-            font-size: 16px;
-            margin-bottom: 15px;
-            transition: border-color 0.3s;
+            font-size: 15px;
+            font-family: 'DM Sans', sans-serif;
+            margin-bottom: 12px;
+            background: var(--bg);
+            color: var(--text);
+            transition: border-color 0.2s, background 0.2s;
         }
- 
-        input:focus {
-            outline: none;
-            border-color: #ED2939;
-        }
- 
+        input:focus { outline: none; border-color: var(--red); background: white; }
+
+        /* ── BUTTONS ── */
         button {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             border: none;
             border-radius: 12px;
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 16px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
             color: white;
+            letter-spacing: 0.3px;
         }
- 
-        button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        button:active:not(:disabled) { transform: translateY(0); }
+        button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+        .btn-primary { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); box-shadow: 0 4px 14px rgba(237,41,57,0.3); }
+        .btn-success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); box-shadow: 0 4px 14px rgba(17,153,142,0.3); }
+        .btn-danger  { background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); }
+        .btn-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 4px 14px rgba(245,158,11,0.3); }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text);
+            font-weight: 600;
         }
- 
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
- 
-        .btn-primary {
-            background: linear-gradient(135deg, #ED2939 0%, #A50000 100%);
-        }
- 
-        .btn-success {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        }
- 
-        .btn-danger {
-            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-        }
- 
+        .btn-outline:hover:not(:disabled) { border-color: var(--red); color: var(--red); box-shadow: none; }
+        .btn-sm { padding: 8px 14px; font-size: 13px; width: auto; }
+
+        /* ── INFO BOX ── */
         .info-box {
-            background: #fff0f0;
-            padding: 20px;
+            background: var(--bg);
+            padding: 18px 20px;
             border-radius: 12px;
-            margin: 20px 0;
+            margin: 16px 0;
             text-align: center;
-            border-left: 4px solid #ED2939;
+            border: 1px solid var(--border);
         }
- 
+
+        /* ── TIMER ── */
         .timer {
-            font-size: 48px;
-            font-weight: bold;
-            color: #ED2939;
-            margin-bottom: 20px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 56px;
+            color: var(--red);
+            letter-spacing: 2px;
+            transition: color 0.5s;
         }
- 
+        .timer.warn   { color: #f97316; }
+        .timer.danger { color: #dc2626; animation: pulse-timer 1s ease-in-out infinite; }
+        @keyframes pulse-timer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* ── GAME CARD ── */
         .game-card {
-            background: linear-gradient(135deg, #ffeaea 0%, #ffcccc 100%);
-            padding: 30px;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+            padding: 24px;
             border-radius: 16px;
             margin-bottom: 20px;
-            border: 1px solid #f5a5a5;
+            border: 1px solid #fccaca;
         }
- 
-        .game-card h3 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 15px;
-        }
- 
-        .game-card p {
-            font-size: 18px;
-            color: #555;
-        }
- 
-        .player-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
- 
+        .game-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--text); margin-bottom: 8px; letter-spacing: 0.5px; }
+        .game-card p  { font-size: 15px; color: #555; line-height: 1.5; }
+
+        /* ── PLAYER GRID ── */
+        .player-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
         .player-box {
-            padding: 20px;
+            padding: 16px;
             border-radius: 12px;
-            background: #f5f5f5;
+            background: var(--bg);
+            border: 2px solid transparent;
+            transition: border-color 0.3s, background 0.3s;
         }
- 
-        .player-box.finished {
-            background: #d4edda;
+        .player-box p { margin: 4px 0; }
+        .player-box.finished { background: var(--success-light); border-color: #86efac; }
+        .player-box.lost     { background: var(--danger-light);  border-color: #fca5a5; }
+
+        /* ── RESULT MESSAGES ── */
+        .result-banner {
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 2px solid transparent;
         }
- 
-        .player-box.lost {
-            background: #f8d7da;
-        }
- 
-        .player-box p {
-            margin: 5px 0;
-        }
- 
+        .result-banner h3 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; margin-bottom: 6px; }
+        .result-banner p  { font-size: 14px; }
+        .result-banner.win  { background: var(--success-light); border-color: #86efac; }
+        .result-banner.win  h3  { color: var(--success); }
+        .result-banner.lose { background: var(--danger-light);  border-color: #fca5a5; }
+        .result-banner.lose h3  { color: #dc2626; }
+        .result-banner.timeout { background: #fff7ed; border-color: #fdba74; }
+        .result-banner.timeout h3 { color: #ea580c; }
+
+        /* ── SCORES ── */
+        .scores-container { max-height: 420px; overflow-y: auto; }
         .score-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            margin-bottom: 10px;
+            padding: 14px 18px;
+            margin-bottom: 8px;
             border-radius: 12px;
-            background: #f5f5f5;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            transition: transform 0.15s;
         }
- 
-        .score-item.gold {
-            background: #ffeaa7;
-            border: 2px solid #fdcb6e;
+        .score-item:hover { transform: translateX(4px); }
+        .score-item.gold   { background: var(--gold-light);   border-color: var(--gold); }
+        .score-item.silver { background: var(--silver-light); border-color: var(--silver); }
+        .score-item.bronze { background: var(--bronze-light); border-color: var(--bronze); }
+        .rank { font-family: 'Bebas Neue', sans-serif; font-size: 26px; margin-right: 14px; color: var(--muted); }
+        .score-item.gold   .rank { color: var(--gold); }
+        .score-item.silver .rank { color: var(--silver); }
+        .score-item.bronze .rank { color: var(--bronze); }
+
+        /* ── ADMIN SPECIFIC ── */
+        .pair-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
         }
- 
-        .score-item.silver {
-            background: #dfe6e9;
-            border: 2px solid #b2bec3;
+        .pair-card .names { font-weight: 600; font-size: 14px; }
+        .pair-card .game-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+        .pair-card .vs { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--red); margin: 0 6px; }
+        .status-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #f97316;
+            display: inline-block;
+            margin-right: 6px;
+            animation: blink 1.4s ease-in-out infinite;
         }
- 
-        .score-item.bronze {
-            background: #fab1a0;
-            border: 2px solid #e17055;
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+        /* ── TABS (admin) ── */
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .tab-btn {
+            flex: 1; padding: 10px; border-radius: 10px;
+            font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+            cursor: pointer; border: 2px solid var(--border);
+            background: transparent; color: var(--muted);
+            transition: all 0.2s; width: auto;
         }
- 
-        .rank {
-            font-size: 24px;
-            font-weight: bold;
-            margin-right: 15px;
+        .tab-btn.active { background: var(--red); border-color: var(--red); color: white; }
+        .tab-btn:hover:not(.active) { border-color: var(--red); color: var(--red); transform: none; box-shadow: none; }
+
+        /* ── SCANNER ── */
+        #scannerContainer {
+            margin-bottom: 16px;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            background: #111;
         }
- 
-        .trophy {
-            font-size: 64px;
-            text-align: center;
-            margin-bottom: 20px;
+        #qr-reader { width: 100%; border: none !important; }
+        #qr-reader button {
+            background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+            color: white; border: none; padding: 10px 20px;
+            border-radius: 8px; font-size: 14px; font-weight: 600;
+            cursor: pointer; margin: 12px auto; display: block; width: auto;
         }
- 
-        .hidden {
-            display: none;
-        }
- 
-        .scores-container {
-            max-height: 400px;
-            overflow-y: auto;
-        }
- 
+        #qr-reader__scan_region { background: black; }
+        #qr-reader__dashboard_section_csr span { color: var(--red) !important; }
+
+        /* ── VICTORY / DEFEAT SCREENS ── */
+        .result-screen-icon { font-size: 80px; text-align: center; margin-bottom: 16px; animation: bounce-in 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+        @keyframes bounce-in { 0%{transform:scale(0);opacity:0} 100%{transform:scale(1);opacity:1} }
+
+        /* ── MISC ── */
+        .hidden { display: none !important; }
+        .trophy { font-size: 64px; text-align: center; margin-bottom: 16px; }
         .error-message {
-            background: #ffebee;
-            color: #c62828;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            text-align: center;
-            font-size: 14px;
+            background: #ffebee; color: #c62828;
+            padding: 13px 16px; border-radius: 10px;
+            margin-bottom: 12px; text-align: center; font-size: 14px;
+            border: 1px solid #fca5a5;
         }
- 
-        .loss-message {
-            background: #fee;
-            border: 2px solid #dc2626;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            text-align: center;
+        .divider { height: 1px; background: var(--border); margin: 20px 0; }
+        .badge {
+            display: inline-block; padding: 3px 10px;
+            border-radius: 20px; font-size: 12px; font-weight: 700;
         }
- 
-        .loss-message h3 {
-            color: #dc2626;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
+        .badge-active { background: #dcfce7; color: #16a34a; }
+        .badge-waiting { background: #fef9c3; color: #92400e; }
     </style>
 </head>
-<body class="bg-gradient-purple">
-    <div id="loginScreen" class="container">
-        <div style="text-align: center;">
-            <div class="icon-box">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-            </div>
-            <h1>🎉 Für die Österreicher</h1>
-        </div>
-        <div id="errorContainer"></div>
-        <input type="text" id="playerNameInput" placeholder="Dein Mannschaft name..." />
-        <input type="password" id="adminPasswordInput" placeholder="Passwort (nur für der Administrator)" />
-        <button class="btn-primary" id="loginBtn">Das Spiel verbinden !</button>
+<body>
+
+<!-- ════════════════ LOGIN ════════════════ -->
+<div id="loginScreen" class="container">
+    <div class="icon-box">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+    </div>
+    <h1>🎉 Für die Österreicher</h1>
+    <p class="subtitle">Verbinde dich und finde deinen Baum!</p>
+    <div id="errorContainer"></div>
+    <input type="text"     id="playerNameInput"    placeholder="Dein Mannschaftsname…" />
+    <input type="password" id="adminPasswordInput" placeholder="Passwort (nur für Administrator)" />
+    <button class="btn-primary" id="loginBtn">Mit dem Spiel verbinden!</button>
+</div>
+
+<!-- ════════════════ ADMIN ════════════════ -->
+<div id="adminScreen" class="container hidden">
+    <h1>🎮 Admin Panel</h1>
+    <p class="subtitle">Verwalte Mini-Spiele und Spieler</p>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="tabWaiting" onclick="switchTab('waiting')">⏳ Wartend (<span id="adminWaitingCount">0</span>)</button>
+        <button class="tab-btn"        id="tabActive"  onclick="switchTab('active')">🎮 Aktiv (<span id="adminActiveCount">0</span>)</button>
     </div>
 
-    <div id="adminScreen" class="container hidden">
-        <h1>🎮 Admin Panel</h1>
-        <p class="subtitle">Gère les mini-jeux et les joueurs</p>
-        <div class="info-box">
-            <p><strong id="adminWaitingCount">0</strong> joueur(s) en attente</p>
-        </div>
-        <button class="btn-success" id="adminStartGameBtn">▶️ Lancer un mini-jeu pour TOUS</button>
-        <button class="btn-danger" id="resetGamesBtn" style="margin-top: 10px;">🔄 Réinitialiser</button>
-        <div style="margin-top: 20px;">
-            <h3 style="margin-bottom: 15px;">Liste des joueurs</h3>
-            <div id="adminPlayerList"></div>
-        </div>
+    <!-- Wartende Spieler -->
+    <div id="panelWaiting">
+        <button class="btn-success" id="adminStartGameBtn">▶️ Mini-Spiel für ALLE starten</button>
+        <div class="divider"></div>
+        <h3 style="margin-bottom:12px; font-size:16px;">Spielerliste</h3>
+        <div id="adminPlayerList"></div>
     </div>
 
-    <div id="waitingScreen" class="container hidden">
-        <h1 id="welcomeText">Willkommen !</h1>
-        <p class="subtitle">Bereit für spielen ?</p>
-        <div class="info-box">
-            <p>Warten auf den Start eines Spiels durch einen Administrator...</p>
-            <p style="margin-top: 10px;"><strong id="waitingCount">0</strong> Spieler wartet</p>
-        </div>
+    <!-- Aktive Partien -->
+    <div id="panelActive" class="hidden">
+        <p class="subtitle" style="margin-bottom:16px;">Laufende Partien in Echtzeit</p>
+        <div id="adminPairList"></div>
     </div>
 
+    <div class="divider"></div>
+    <button class="btn-danger" id="resetGamesBtn">🔄 Alles zurücksetzen</button>
+</div>
+
+<!-- ════════════════ WAITING ════════════════ -->
+<div id="waitingScreen" class="container hidden">
+    <div class="icon-box"><span style="font-size:32px;">🌳</span></div>
+    <h1 id="welcomeText">Willkommen!</h1>
+    <p class="subtitle">Bereit zum Spielen?</p>
+    <div class="info-box">
+        <p>Warten auf den Start durch den Administrator…</p>
+        <p style="margin-top:10px;"><strong id="waitingCount">0</strong> Spieler warten</p>
+    </div>
+</div>
+
+<!-- ════════════════ PLAYING ════════════════ -->
 <div id="playingScreen" class="container hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px;">
+        <div>
+            <p style="color:var(--muted); font-size:13px; margin-bottom:2px;">Verbleibende Zeit</p>
             <div class="timer" id="timer">300s</div>
-            <div style="text-align: right;">
-                <p style="color: #666; margin-bottom: 5px;">Gegner</p>
-                <p style="font-weight: bold; font-size: 18px;" id="opponentName">-</p>
-            </div>
         </div>
-        
-        <div class="game-card">
-            <h3 id="gameName">Herausforderung</h3>
-            <p id="gameDescription">Beschreibung der Herausforderung</p>
+        <div style="text-align:right;">
+            <p style="color:var(--muted); font-size:13px; margin-bottom:4px;">Gegner</p>
+            <p style="font-weight:700; font-size:18px;" id="opponentName">–</p>
         </div>
-        
-        <div id="lossMessage" class="loss-message hidden">
-            <h3>❌ Zu spät !</h3>
-            <p>Dein Gegner war zuerst fertig.</p>
-        </div>
-        
-        <div class="player-grid">
-            <div class="player-box" id="playerBox">
-                <p style="color: #666; font-size: 14px;">Ich</p>
-                <p style="font-weight: bold;" id="playerNameDisplay">-</p>
-                <p style="font-size: 14px; margin-top: 5px;">Punkte: <strong id="playerPoints">0</strong></p>
-            </div>
-            <div class="player-box" id="opponentBox">
-                <p style="color: #666; font-size: 14px;">Gegner</p>
-                <p style="font-weight: bold;" id="opponentNameDisplay">-</p>
-                <p style="font-size: 14px; margin-top: 5px;">Punkte: <strong id="opponentPoints">0</strong></p>
-            </div>
-        </div>
-
-        <div id="scannerContainer" class="hidden">
-            <div id="qr-reader"></div>
-        </div>
-        
-        <button class="btn-primary" id="startScanBtn" style="margin-bottom: 10px;">📷 Baum scannen !</button>
-        <button class="btn-success hidden" id="finishBtn">✓ Fertig !</button>
     </div>
 
-    <div id="leaderboardScreen" class="container hidden">
-        <div class="trophy">🏆</div>
-        <h1>Rang</h1>
-        <p class="subtitle">Die Besten !</p>
-        <div class="scores-container" id="scoresList"></div>
-        <button class="btn-primary" id="replayBtn" style="margin-top: 20px;">🔄 Wiederholen !</button>
+    <div class="game-card">
+        <h3 id="gameName">Herausforderung</h3>
+        <p id="gameDescription">Beschreibung der Herausforderung</p>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <script>
-        const ADMIN_PASSWORD = "M.lefol";
-        const SUPABASE_URL = 'https://usyaqoqacryoyhzlvanj.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzeWFxb3FhY3J5b3loemx2YW5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0Njc4MTUsImV4cCI6MjA5NTA0MzgxNX0.jIBdiW8pP1vGAnNk2kFRmXDHct34RtnhkuUMNq6od8k';
-        
-        let supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <div class="player-grid">
+        <div class="player-box" id="playerBox">
+            <p style="color:var(--muted); font-size:12px;">Ich</p>
+            <p style="font-weight:700;" id="playerNameDisplay">–</p>
+            <p style="font-size:13px; margin-top:4px;">Punkte: <strong id="playerPoints">0</strong></p>
+        </div>
+        <div class="player-box" id="opponentBox">
+            <p style="color:var(--muted); font-size:12px;">Gegner</p>
+            <p style="font-weight:700;" id="opponentNameDisplay">–</p>
+            <p style="font-size:13px; margin-top:4px;">Punkte: <strong id="opponentPoints">0</strong></p>
+        </div>
+    </div>
 
-        const MINIGAMES = [
-            { id: 1, name: "Der Mammutbaum (Sequoiadendron giganteum)", description: "Ein sehr großer und alter Baum aus Amerika.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_01" },
-            { id: 2, name: "Die Himalaya-Zeder (Cedrus deodara)", description: "Ein schöner Nadelbaum mit langen, weichen Ästen", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_02" },
-            { id: 3, name: "Die Atlas-Zeder (Cedrus atlantica)", description: "Ein starker Baum aus Nordafrika.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_03" },
-            { id: 4, name: "Der Ginkgo (Ginkgo biloba)", description: "Ein sehr alter Baum mit gelben Blättern im Herbst.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_04" },
-            { id: 5, name: "Die Sumpfzypresse (Taxodium distichum)", description: "Ein Baum, der Wasser und feuchte Orte mag.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_05" },
-            { id: 6, name: "Die Steineiche (Quercus ilex)", description: "Eine immergrüne Eiche mit kleinen dunklen Blättern.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_06" },
-            { id: 7, name: "Die Pyramideneiche (Quercus robur fastigiata)", description: "Eine hohe und schmale Eiche.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_07" },
-            { id: 8, name: "Die Platane (Platanus × hispanica)", description: "Ein großer Schattenbaum in vielen Parks.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_08" },
-            { id: 9, name: "Der Schnurbaum (Styphnolobium japonicum)", description: "Ein dekorativer Baum mit kleinen weißen Blüten.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_09" },
-            { id: 10, name: "Der Kakibaum (Diospyros kaki)", description: "Ein Baum mit orangefarbenen Früchten im Herbst.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_10" }
-        ];
+    <div id="scannerContainer" class="hidden">
+        <div id="qr-reader"></div>
+    </div>
 
-        let playerId = null;
-        let playerName = '';
-        let isAdmin = false;
-        let currentPair = null;
-        let currentGame = null;
-        let timerInterval = null;
-        let playerFinished = false;
-        let opponentFinished = false;
-        let gameChannel = null;
-        let html5QrCode = null;
+    <button class="btn-primary"         id="startScanBtn"  style="margin-bottom:10px;">📷 Baum scannen!</button>
+    <button class="btn-success  hidden" id="finishBtn">✓ Fertig!</button>
+</div>
 
-        let pairingChannel = null;
+<!-- ════════════════ VICTORY ════════════════ -->
+<div id="victoryScreen" class="container hidden">
+    <div class="result-screen-icon">🏅</div>
+    <h1 style="color:var(--success);">Gewonnen!</h1>
+    <p class="subtitle">Du hast den Baum zuerst gefunden!</p>
+    <div class="result-banner win">
+        <h3>✅ Hervorragend!</h3>
+        <p id="victoryTime">Du hast es in … Sekunden geschafft.</p>
+    </div>
+    <div class="info-box">
+        <p>⭐ <strong>+1 Punkt</strong> wurde deinem Konto gutgeschrieben.</p>
+    </div>
+    <button class="btn-primary" id="victoryLeaderboardBtn" style="margin-top:12px;">📊 Rangliste ansehen</button>
+</div>
 
-        function listenForPairing() {
-            if (pairingChannel) supabaseClient.removeChannel(pairingChannel);
-            pairingChannel = supabaseClient.channel('public:players')
-                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'players', filter: 'id=eq.' + playerId }, async (payload) => {
-                    if (payload.new.status === 'paired') {
-                        // L'admin a lancé le jeu !
-                        const { data: pairData } = await supabaseClient.from('pairs')
-                            .select('*')
-                            .or(`player1_id.eq.${playerId},player2_id.eq.${playerId}`)
-                            .eq('status', 'active')
-                            .single();
+<!-- ════════════════ DEFEAT ════════════════ -->
+<div id="defeatScreen" class="container hidden">
+    <div class="result-screen-icon">😔</div>
+    <h1 style="color:#dc2626;">Verloren…</h1>
+    <p class="subtitle" id="defeatSubtitle">Dein Gegner war schneller.</p>
+    <div class="result-banner lose" id="defeatBanner">
+        <h3>❌ Nicht diesmal!</h3>
+        <p id="defeatMessage">Versuche es beim nächsten Spiel erneut.</p>
+    </div>
+    <button class="btn-outline" id="defeatLeaderboardBtn" style="margin-top:12px; color:var(--text);">📊 Rangliste ansehen</button>
+</div>
 
-                        if (pairData) {
-                            currentPair = pairData;
-                            const isPlayer1 = currentPair.player1_id === playerId;
-                            const opponentId = isPlayer1 ? currentPair.player2_id : currentPair.player1_id;
+<!-- ════════════════ LEADERBOARD ════════════════ -->
+<div id="leaderboardScreen" class="container hidden">
+    <div class="trophy">🏆</div>
+    <h1>Rangliste</h1>
+    <p class="subtitle">Die Besten des Tages!</p>
+    <div class="scores-container" id="scoresList"></div>
+    <button class="btn-primary" id="replayBtn" style="margin-top:20px;">🔄 Nächste Runde!</button>
+</div>
 
-                            const { data: opData } = await supabaseClient.from('players').select('name, points').eq('id', opponentId).single();
-                            const { data: myData } = await supabaseClient.from('players').select('points').eq('id', playerId).single();
+<!-- ════════════════ SCRIPTS ════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+    // ─── CONFIG ───────────────────────────────────────────────────────────
+    const ADMIN_PASSWORD = "M.lefol";   // ⚠️ À sécuriser côté serveur idéalement
+    const SUPABASE_URL   = 'https://usyaqoqacryoyhzlvanj.supabase.co';
+    const SUPABASE_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzeWFxb3FhY3J5b3loemx2YW5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0Njc4MTUsImV4cCI6MjA5NTA0MzgxNX0.jIBdiW8pP1vGAnNk2kFRmXDHct34RtnhkuUMNq6od8k';
 
-                            currentGame = MINIGAMES.find(g => g.id === currentPair.game_id);
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-                            document.getElementById('opponentName').textContent = opData.name;
-                            document.getElementById('opponentNameDisplay').textContent = opData.name;
-                            document.getElementById('playerNameDisplay').textContent = playerName;
-                            document.getElementById('playerPoints').textContent = myData.points || 0;
-                            document.getElementById('opponentPoints').textContent = opData.points || 0;
-                            document.getElementById('gameName').textContent = currentGame.name;
-                            document.getElementById('gameDescription').textContent = currentGame.description;
+    const MINIGAMES = [
+        { id: 1,  name: "Der Mammutbaum (Sequoiadendron giganteum)",    description: "Ein sehr großer und alter Baum aus Amerika.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_01" },
+        { id: 2,  name: "Die Himalaya-Zeder (Cedrus deodara)",          description: "Ein schöner Nadelbaum mit langen, weichen Ästen.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_02" },
+        { id: 3,  name: "Die Atlas-Zeder (Cedrus atlantica)",           description: "Ein starker Baum aus Nordafrika.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_03" },
+        { id: 4,  name: "Der Ginkgo (Ginkgo biloba)",                   description: "Ein sehr alter Baum mit gelben Blättern im Herbst.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_04" },
+        { id: 5,  name: "Die Sumpfzypresse (Taxodium distichum)",       description: "Ein Baum, der Wasser und feuchte Orte mag.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_05" },
+        { id: 6,  name: "Die Steineiche (Quercus ilex)",                description: "Eine immergrüne Eiche mit kleinen dunklen Blättern.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_06" },
+        { id: 7,  name: "Die Pyramideneiche (Quercus robur fastigiata)",description: "Eine hohe und schmale Eiche.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_07" },
+        { id: 8,  name: "Die Platane (Platanus × hispanica)",           description: "Ein großer Schattenbaum in vielen Parks.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_08" },
+        { id: 9,  name: "Der Schnurbaum (Styphnolobium japonicum)",     description: "Ein dekorativer Baum mit kleinen weißen Blüten.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_09" },
+        { id: 10, name: "Der Kakibaum (Diospyros kaki)",                description: "Ein Baum mit orangefarbenen Früchten im Herbst.", duration: 300, qrCodeExpected: "https://www.google.com/search?client=firefox-b-d&q=arbre_10" }
+    ];
 
-                            showScreen('playingScreen');
-                            startTimer(currentGame.duration);
-                            subscribeToScores();
-                        }
+    // ─── STATE ────────────────────────────────────────────────────────────
+    let playerId        = null;
+    let playerName      = '';
+    let isAdmin         = false;
+    let currentPair     = null;
+    let currentGame     = null;
+    let timerInterval   = null;
+    let playerFinished  = false;
+    let opponentFinished= false;
+    let gameChannel     = null;
+    let pairingChannel  = null;
+    let adminChannel    = null;
+    let html5QrCode     = null;
+
+    // ─── HELPERS ──────────────────────────────────────────────────────────
+    function showScreen(id) {
+        document.querySelectorAll('.container').forEach(s => s.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+    }
+    function showError(msg) {
+        document.getElementById('errorContainer').innerHTML = `<div class="error-message">${msg}</div>`;
+    }
+    function clearError() {
+        document.getElementById('errorContainer').innerHTML = '';
+    }
+
+    // ─── TABS (admin) ──────────────────────────────────────────────────────
+    function switchTab(tab) {
+        document.getElementById('tabWaiting').classList.toggle('active', tab === 'waiting');
+        document.getElementById('tabActive').classList.toggle('active',  tab === 'active');
+        document.getElementById('panelWaiting').classList.toggle('hidden', tab !== 'waiting');
+        document.getElementById('panelActive').classList.toggle('hidden',  tab !== 'active');
+        if (tab === 'active') loadAdminPairList();
+    }
+
+    // ─── LOGIN ─────────────────────────────────────────────────────────────
+    async function handleLogin() {
+        playerName = document.getElementById('playerNameInput').value.trim();
+        const pass = document.getElementById('adminPasswordInput').value.trim();
+        if (!playerName) { showError('Gib deinen Namen ein!'); return; }
+        clearError();
+        isAdmin = (pass === ADMIN_PASSWORD);
+
+        try {
+            await supabaseClient.from('players').delete().eq('name', playerName);
+            const { data } = await supabaseClient.from('players').insert([{
+                name: playerName, status: 'waiting', is_admin: isAdmin, points: 0
+            }]).select().single();
+            playerId = data.id;
+
+            if (isAdmin) {
+                showScreen('adminScreen');
+                refreshAdminCounts();
+                loadAdminPlayerList();
+                subscribeAdminRealtime();
+                setInterval(() => {
+                    if (!document.getElementById('adminScreen').classList.contains('hidden')) {
+                        refreshAdminCounts();
+                        loadAdminPlayerList();
                     }
-                }).subscribe();
-        }
-        
-        function showError(msg) {
-            document.getElementById('errorContainer').innerHTML = `<div class="error-message">${msg}</div>`;
-        }
-
-        function clearError() {
-            document.getElementById('errorContainer').innerHTML = '';
-        }
-
-        function showScreen(id) {
-            document.querySelectorAll('.container').forEach(s => s.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-        }
-
-        async function handleLogin() {
-            playerName = document.getElementById('playerNameInput').value.trim();
-            const pass = document.getElementById('adminPasswordInput').value.trim();
-            
-            if (!playerName) {
-                showError('Gib deinen Namen ein!');
-                return;
+                }, 4000);
+            } else {
+                document.getElementById('welcomeText').textContent = `Willkommen, ${playerName}! 👋`;
+                showScreen('waitingScreen');
+                updateWaitingCount();
+                listenForPairing();
             }
+        } catch (err) {
+            console.error(err);
+            showError('Verbindungsfehler. Bitte erneut versuchen.');
+        }
+    }
 
-            clearError();
-            isAdmin = pass === ADMIN_PASSWORD;
+    // ─── WAITING COUNT ──────────────────────────────────────────────────────
+    async function updateWaitingCount() {
+        const { count } = await supabaseClient.from('players')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'waiting').eq('is_admin', false);
+        document.getElementById('waitingCount').textContent = count || 0;
+    }
 
-            try {
-                await supabaseClient.from('players').delete().eq('name', playerName);
-                
-                const { data } = await supabaseClient.from('players').insert([{
-                    name: playerName,
-                    status: 'waiting',
-                    is_admin: isAdmin,
-                    points: 0
-                }]).select().single();
+    async function refreshAdminCounts() {
+        const { count: waiting } = await supabaseClient.from('players')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'waiting').eq('is_admin', false);
+        document.getElementById('adminWaitingCount').textContent = waiting || 0;
 
-                playerId = data.id;
+        const { count: active } = await supabaseClient.from('pairs')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'active');
+        document.getElementById('adminActiveCount').textContent = active || 0;
+    }
 
-                if (isAdmin) {
-                    showScreen('adminScreen');
-                    loadAdminPlayerList();
-                    updateAdminWaitingCount();
-                    setInterval(() => {
-                        if (!document.getElementById('adminScreen').classList.contains('hidden')) {
-                            updateAdminWaitingCount();
-                            loadAdminPlayerList();
-                        }
-                    }, 3000);
-                } else {
-                    document.getElementById('welcomeText').textContent = `Bienvenue ${playerName} ! 👋`;
-                    showScreen('waitingScreen');
-                    updateWaitingCount();
-                    listenForPairing();
+    // ─── ADMIN – LISTE JOUEURS ──────────────────────────────────────────────
+    async function loadAdminPlayerList() {
+        const { data } = await supabaseClient.from('players')
+            .select('*').eq('status', 'waiting').eq('is_admin', false)
+            .order('created_at', { ascending: true });
+        const list = document.getElementById('adminPlayerList');
+        list.innerHTML = '';
+        if (!data || data.length === 0) {
+            list.innerHTML = '<p style="text-align:center;color:var(--muted);padding:20px;">Kein Spieler wartet</p>';
+            return;
+        }
+        data.forEach((p, i) => {
+            const div = document.createElement('div');
+            div.className = 'player-box';
+            div.style.marginBottom = '10px';
+            div.innerHTML = `
+                <p style="font-weight:700;">${i + 1}. ${p.name}</p>
+                <p style="font-size:12px;color:var(--muted);">Punkte: ${p.points || 0}</p>`;
+            list.appendChild(div);
+        });
+    }
+
+    // ─── ADMIN – PAIRES ACTIVES (NOUVEAU) ──────────────────────────────────
+    async function loadAdminPairList() {
+        const { data: pairs } = await supabaseClient.from('pairs')
+            .select('*').eq('status', 'active');
+        const list = document.getElementById('adminPairList');
+        list.innerHTML = '';
+
+        if (!pairs || pairs.length === 0) {
+            list.innerHTML = '<p style="text-align:center;color:var(--muted);padding:20px;">Keine aktiven Partien</p>';
+            return;
+        }
+
+        for (const pair of pairs) {
+            const { data: p1 } = await supabaseClient.from('players').select('name').eq('id', pair.player1_id).single();
+            const { data: p2 } = await supabaseClient.from('players').select('name').eq('id', pair.player2_id).single();
+            const game = MINIGAMES.find(g => g.id === pair.game_id);
+
+            const card = document.createElement('div');
+            card.className = 'pair-card';
+            card.innerHTML = `
+                <div>
+                    <div class="names">
+                        <span class="status-dot"></span>
+                        ${p1 ? p1.name : '?'} <span class="vs">VS</span> ${p2 ? p2.name : '?'}
+                    </div>
+                    <div class="game-label">🌳 ${game ? game.name : 'Unbekanntes Spiel'}</div>
+                </div>
+                <button class="btn-warning btn-sm" onclick="adminForceEndPair('${pair.id}')">⏹ Beenden</button>`;
+            list.appendChild(card);
+        }
+    }
+
+    // ─── ADMIN – FORCER FIN D'UNE PARTIE (NOUVEAU) ──────────────────────────
+    async function adminForceEndPair(pairId) {
+        if (!confirm('Diese Partie wirklich zwangsweise beenden?')) return;
+        try {
+            await supabaseClient.from('pairs').update({ status: 'finished' }).eq('id', pairId);
+            // Remettre les joueurs en waiting
+            const { data: pair } = await supabaseClient.from('pairs').select('player1_id, player2_id').eq('id', pairId).single();
+            if (pair) {
+                await supabaseClient.from('players')
+                    .update({ status: 'waiting' })
+                    .in('id', [pair.player1_id, pair.player2_id]);
+            }
+            loadAdminPairList();
+            refreshAdminCounts();
+        } catch (err) {
+            console.error(err);
+            alert('Fehler: ' + err.message);
+        }
+    }
+
+    // ─── ADMIN – REALTIME (NOUVEAU) ──────────────────────────────────────────
+    function subscribeAdminRealtime() {
+        if (adminChannel) supabaseClient.removeChannel(adminChannel);
+        adminChannel = supabaseClient.channel('admin-watch')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'players' }, () => {
+                refreshAdminCounts();
+                loadAdminPlayerList();
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'pairs' }, () => {
+                refreshAdminCounts();
+                if (!document.getElementById('panelActive').classList.contains('hidden')) {
+                    loadAdminPairList();
                 }
-            } catch (err) {
-                console.error(err);
-                showError('Verbindungsfehler');
-            }
-        }
+            })
+            .subscribe();
+    }
 
-        async function loadUsedGames() {
-            const { data } = await supabaseClient.from('pairs').select('game_id');
-            usedGames = data ? data.map(p => p.game_id) : [];
-        }
+    // ─── ADMIN – START GAME ──────────────────────────────────────────────────
+    async function adminStartGame() {
+        const btn = document.getElementById('adminStartGameBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Starten…';
 
-        function updateGamesRemaining() {
-            const remaining = MINIGAMES.length - new Set(usedGames).size;
-            document.getElementById('gamesRemaining').textContent = remaining;
-        }
+        try {
+            const { data: players } = await supabaseClient.from('players')
+                .select('*').eq('status', 'waiting').eq('is_admin', false);
 
-        async function resetUsedGames() {
-            if (!confirm('Réinitialiser tous les mini-jeux et scores ?')) return;
-            
-            try {
-                await supabaseClient.from('scores').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-                await supabaseClient.from('pairs').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-                await supabaseClient.from('players').update({ points: 0 }).neq('id', '00000000-0000-0000-0000-000000000000');
-                alert('Réinitialisé ! Tous les joueurs peuvent refaire tous les mini-jeux.');
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        async function updateWaitingCount() {
-            const { count } = await supabaseClient.from('players').select('*', { count: 'exact', head: true }).eq('status', 'waiting').eq('is_admin', false);
-            document.getElementById('waitingCount').textContent = count || 0;
-        }
-
-        async function updateAdminWaitingCount() {
-            const { count } = await supabaseClient.from('players').select('*', { count: 'exact', head: true }).eq('status', 'waiting').eq('is_admin', false);
-            document.getElementById('adminWaitingCount').textContent = count || 0;
-        }
-
-        async function loadAdminPlayerList() {
-            const { data } = await supabaseClient.from('players').select('*').eq('status', 'waiting').eq('is_admin', false).order('created_at', { ascending: true });
-            const list = document.getElementById('adminPlayerList');
-            list.innerHTML = '';
-
-            if (!data || data.length === 0) {
-                list.innerHTML = '<p style="text-align:center; color:#666; padding:20px;">Aucun joueur</p>';
+            if (!players || players.length === 0) {
+                alert('Kein Spieler wartet!');
+                btn.disabled = false; btn.textContent = '▶️ Mini-Spiel für ALLE starten';
                 return;
             }
 
-            data.forEach((p, i) => {
-                const div = document.createElement('div');
-                div.className = 'player-box';
-                div.style.marginBottom = '10px';
-                div.innerHTML = `<p style="font-weight: bold;">${i + 1}. ${p.name}</p><p style="font-size: 12px; color: #666;">Points: ${p.points || 0}</p>`;
-                list.appendChild(div);
-            });
-        }
+            let list = [...players].sort(() => Math.random() - 0.5);
+            if (list.length % 2 !== 0) {
+                const { data: bot } = await supabaseClient.from('players')
+                    .insert([{ name: 'Bot 🤖', status: 'paired', is_admin: false, points: 0 }])
+                    .select().single();
+                list.push(bot);
+            }
 
-        async function adminStartGame() {
-            const btn = document.getElementById('adminStartGameBtn');
-            btn.disabled = true;
+            const { data: playerGames } = await supabaseClient.from('pairs').select('player1_id, player2_id, game_id');
+            const playerHistory = {};
+            if (playerGames) {
+                playerGames.forEach(p => {
+                    if (!playerHistory[p.player1_id]) playerHistory[p.player1_id] = [];
+                    if (!playerHistory[p.player2_id]) playerHistory[p.player2_id] = [];
+                    playerHistory[p.player1_id].push(p.game_id);
+                    playerHistory[p.player2_id].push(p.game_id);
+                });
+            }
 
-            try {
-                const { data: players } = await supabaseClient.from('players').select('*').eq('status', 'waiting').eq('is_admin', false);
+            const usedInRound = [];
+            const pairs = [];
 
-                if (!players || players.length === 0) {
-                    alert('Aucun joueur !');
-                    btn.disabled = false;
+            for (let i = 0; i < list.length; i += 2) {
+                const p1 = list[i], p2 = list[i + 1];
+                const p1g = playerHistory[p1.id] || [], p2g = playerHistory[p2.id] || [];
+                const available = MINIGAMES.filter(g =>
+                    !p1g.includes(g.id) && !p2g.includes(g.id) && !usedInRound.includes(g.id));
+                if (available.length === 0) {
+                    alert(`Kein Spiel mehr verfügbar für ${p1.name} und ${p2.name}!`);
+                    btn.disabled = false; btn.textContent = '▶️ Mini-Spiel für ALLE starten';
                     return;
                 }
-
-                // Appariement aléatoire
-                let list = [...players].sort(() => Math.random() - 0.5);
-                
-                if (list.length % 2 !== 0) {
-                    const { data: bot } = await supabaseClient.from('players').insert([{ name: 'Bot 🤖', status: 'paired', is_admin: false, points: 0 }]).select().single();
-                    list.push(bot);
-                }
-
-                // Récupérer les jeux déjà faits par chaque joueur
-                const { data: playerGames } = await supabaseClient
-                    .from('pairs')
-                    .select('player1_id, player2_id, game_id');
-
-                const playerHistory = {};
-                if (playerGames) {
-                    playerGames.forEach(pair => {
-                        if (!playerHistory[pair.player1_id]) playerHistory[pair.player1_id] = [];
-                        if (!playerHistory[pair.player2_id]) playerHistory[pair.player2_id] = [];
-                        playerHistory[pair.player1_id].push(pair.game_id);
-                        playerHistory[pair.player2_id].push(pair.game_id);
-                    });
-                }
-
-                const usedInRound = [];
-                const pairs = [];
-
-                // Créer les paires avec des jeux uniques
-                for (let i = 0; i < list.length; i += 2) {
-                    const player1 = list[i];
-                    const player2 = list[i + 1];
-
-                    const p1Games = playerHistory[player1.id] || [];
-                    const p2Games = playerHistory[player2.id] || [];
-
-                    // Trouver un jeu que ni l'un ni l'autre n'a fait, et pas utilisé cette manche
-                    const availableForPair = MINIGAMES.filter(g => 
-                        !p1Games.includes(g.id) && 
-                        !p2Games.includes(g.id) && 
-                        !usedInRound.includes(g.id)
-                    );
-
-                    if (availableForPair.length === 0) {
-                        alert(`Impossible de trouver un jeu pour ${player1.name} et ${player2.name}. Ils ont déjà tout fait ensemble !`);
-                        btn.disabled = false;
-                        return;
-                    }
-
-                    const game = availableForPair[Math.floor(Math.random() * availableForPair.length)];
-                    usedInRound.push(game.id);
-
-                    pairs.push({
-                        player1: player1,
-                        player2: player2,
-                        game: game
-                    });
-                }
-
-                // Créer toutes les paires en base
-                for (const pair of pairs) {
-                    await supabaseClient.from('players').update({ status: 'paired' }).in('id', [pair.player1.id, pair.player2.id]);
-                    await supabaseClient.from('pairs').insert([{
-                        player1_id: pair.player1.id,
-                        player2_id: pair.player2.id,
-                        game_id: pair.game.id,
-                        status: 'active'
-                    }]);
-                }
-
-                alert(`${pairs.length} paires lancées !\n${pairs.map(p => `${p.player1.name} vs ${p.player2.name} → ${p.game.name}`).join('\n')}`);
-                updateAdminWaitingCount();
-                loadAdminPlayerList();
-                btn.disabled = false;
-            } catch (err) {
-                console.error(err);
-                alert('Erreur : ' + err.message);
-                btn.disabled = false;
+                const game = available[Math.floor(Math.random() * available.length)];
+                usedInRound.push(game.id);
+                pairs.push({ player1: p1, player2: p2, game });
             }
-        }
 
-// Initialiser le scanner quand on clique sur le bouton
-document.getElementById('startScanBtn').addEventListener('click', () => {
-    const scannerContainer = document.getElementById('scannerContainer');
-    const startBtn = document.getElementById('startScanBtn');
-    
-    scannerContainer.classList.remove('hidden');
-    startBtn.classList.add('hidden');
-
-    // Cibler la div qr-reader
-    html5QrCode = new Html5Qrcode("qr-reader");
-
-    html5QrCode.start(
-        { facingMode: "environment" }, // Force la caméra arrière du téléphone
-        {
-            fps: 10,
-            qrbox: { width: 250, height: 250 }
-        },
-        (decodedText, decodedResult) => {
-            // Cette fonction se déclenche QUAND un QR code est lu
-            verifierQrCode(decodedText);
-        },
-        (errorMessage) => {
-            // Ignore les erreurs de lecture en continu (la caméra cherche en boucle)
-        }
-    ).catch((err) => {
-        console.error("Erreur d'accès à la caméra", err);
-        showError("Impossible d'accéder à la caméra. Vérifie les permissions.");
-    });
-});
-
-function verifierQrCode(texteLu) {
-    if (texteLu === currentGame.qrCodeExpected) {
-        // C'est le bon arbre !
-        
-        // 1. Arrêter la caméra
-        html5QrCode.stop().then(() => {
-            document.getElementById('scannerContainer').classList.add('hidden');
-            
-            // 2. Déclencher ta logique de victoire existante
-            handleFinish();
-            
-            alert("Bravo! Das ist der richtige Baum!");
-        });
-    } else {
-        // Mauvais arbre scanné
-        alert("Falscher Baum!");
-    }
-}
-        function startTimer(duration) {
-            let time = duration;
-            document.getElementById('timer').textContent = `${time}s`;
-            if (timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                time--;
-                document.getElementById('timer').textContent = `${time}s`;
-                if (time <= 0) clearInterval(timerInterval);
-            }, 1000);
-        }
-
-        async function handleFinish() {
-            if (playerFinished || opponentFinished) return;
-            playerFinished = true;
-
-            document.getElementById('finishBtn').disabled = true;
-            document.getElementById('finishBtn').textContent = '✓ Fertig!';
-            document.getElementById('playerBox').classList.add('finished');
-
-            const time = parseInt(document.getElementById('timer').textContent);
-            const final = currentGame.duration - time;
-
-            try {
-                const { data: me } = await supabaseClient.from('players').select('points').eq('id', playerId).single();
-                await supabaseClient.from('players').update({ points: (me.points || 0) + 1, status: 'finished' }).eq('id', playerId);
-                await supabaseClient.from('scores').insert([{
-                    player_id: playerId,
-                    pair_id: currentPair.id,
-                    player_name: playerName,
-                    game_name: currentGame.name,
-                    time_seconds: final,
-                    won: true
+            for (const pair of pairs) {
+                await supabaseClient.from('players').update({ status: 'paired' })
+                    .in('id', [pair.player1.id, pair.player2.id]);
+                await supabaseClient.from('pairs').insert([{
+                    player1_id: pair.player1.id, player2_id: pair.player2.id,
+                    game_id: pair.game.id, status: 'active'
                 }]);
-                await supabaseClient.from('pairs').update({ status: 'finished' }).eq('id', currentPair.id);
-            } catch (err) {
-                console.error(err);
             }
+
+            alert(`${pairs.length} Paar(e) gestartet!\n${pairs.map(p => `${p.player1.name} vs ${p.player2.name} → ${p.game.name}`).join('\n')}`);
+            refreshAdminCounts(); loadAdminPlayerList();
+        } catch (err) {
+            console.error(err); alert('Fehler: ' + err.message);
         }
 
-        function subscribeToScores() {
-            if (gameChannel) supabaseClient.removeChannel(gameChannel);
-            gameChannel = supabaseClient.channel('score-' + currentPair.id).on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'scores' }, async (payload) => {
-                if (payload.new.pair_id === currentPair.id) {
-                    if (payload.new.player_id !== playerId) {
+        btn.disabled = false; btn.textContent = '▶️ Mini-Spiel für ALLE starten';
+    }
+
+    // ─── ADMIN – RESET ────────────────────────────────────────────────────────
+    async function resetUsedGames() {
+        if (!confirm('Alle Mini-Spiele und Punkte zurücksetzen?')) return;
+        try {
+            const NULL_UUID = '00000000-0000-0000-0000-000000000000';
+            await supabaseClient.from('scores').delete().neq('id', NULL_UUID);
+            await supabaseClient.from('pairs').delete().neq('id', NULL_UUID);
+            await supabaseClient.from('players').update({ points: 0 }).neq('id', NULL_UUID);
+            alert('Zurückgesetzt! Alle Spieler können von vorne beginnen.');
+            refreshAdminCounts(); loadAdminPlayerList();
+        } catch (err) { console.error(err); }
+    }
+
+    // ─── PAIRING LISTENER ─────────────────────────────────────────────────────
+    function listenForPairing() {
+        if (pairingChannel) supabaseClient.removeChannel(pairingChannel);
+        pairingChannel = supabaseClient.channel('public:players:' + playerId)
+            .on('postgres_changes', {
+                event: 'UPDATE', schema: 'public', table: 'players',
+                filter: 'id=eq.' + playerId
+            }, async (payload) => {
+                if (payload.new.status === 'paired') {
+                    const { data: pairData } = await supabaseClient.from('pairs')
+                        .select('*')
+                        .or(`player1_id.eq.${playerId},player2_id.eq.${playerId}`)
+                        .eq('status', 'active').single();
+                    if (!pairData) return;
+
+                    currentPair = pairData;
+                    const isP1      = currentPair.player1_id === playerId;
+                    const opponentId = isP1 ? currentPair.player2_id : currentPair.player1_id;
+
+                    const { data: opData } = await supabaseClient.from('players').select('name, points').eq('id', opponentId).single();
+                    const { data: myData } = await supabaseClient.from('players').select('points').eq('id', playerId).single();
+
+                    currentGame = MINIGAMES.find(g => g.id === currentPair.game_id);
+
+                    document.getElementById('opponentName').textContent       = opData.name;
+                    document.getElementById('opponentNameDisplay').textContent = opData.name;
+                    document.getElementById('playerNameDisplay').textContent   = playerName;
+                    document.getElementById('playerPoints').textContent        = myData.points || 0;
+                    document.getElementById('opponentPoints').textContent      = opData.points || 0;
+                    document.getElementById('gameName').textContent            = currentGame.name;
+                    document.getElementById('gameDescription').textContent     = currentGame.description;
+
+                    // Réinitialiser l'UI de jeu
+                    document.getElementById('playerBox').classList.remove('finished', 'lost');
+                    document.getElementById('opponentBox').classList.remove('finished');
+                    document.getElementById('startScanBtn').classList.remove('hidden');
+                    document.getElementById('finishBtn').classList.add('hidden');
+                    document.getElementById('scannerContainer').classList.add('hidden');
+
+                    showScreen('playingScreen');
+                    startTimer(currentGame.duration);
+                    subscribeToScores();
+                }
+            }).subscribe();
+    }
+
+    // ─── TIMER (avec couleurs) ────────────────────────────────────────────────
+    function startTimer(duration) {
+        let time = duration;
+        const timerEl = document.getElementById('timer');
+        timerEl.textContent = `${time}s`;
+        timerEl.className = 'timer';
+        if (timerInterval) clearInterval(timerInterval);
+
+        timerInterval = setInterval(() => {
+            time--;
+            timerEl.textContent = `${time}s`;
+
+            // ── Couleur progressive ──
+            if (time <= 30) {
+                timerEl.className = 'timer danger';
+            } else if (time <= 60) {
+                timerEl.className = 'timer warn';
+            } else {
+                timerEl.className = 'timer';
+            }
+
+            if (time <= 0) {
+                clearInterval(timerInterval);
+                handleTimeOut();   // FIX: fin de partie automatique
+            }
+        }, 1000);
+    }
+
+    // ─── TIMEOUT (FIX) ────────────────────────────────────────────────────────
+    async function handleTimeOut() {
+        if (playerFinished || opponentFinished) return;
+        opponentFinished = true; // empêche d'autres triggers
+        try {
+            await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId);
+        } catch (err) { console.error(err); }
+        showDefeat('timeout');
+    }
+
+    // ─── QR SCAN ──────────────────────────────────────────────────────────────
+    document.getElementById('startScanBtn').addEventListener('click', () => {
+        document.getElementById('scannerContainer').classList.remove('hidden');
+        document.getElementById('startScanBtn').classList.add('hidden');
+
+        html5QrCode = new Html5Qrcode("qr-reader");
+        html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            (decodedText) => { verifierQrCode(decodedText); },
+            () => {}
+        ).catch((err) => {
+            console.error(err);
+            showError("Kamerazugriff verweigert. Bitte Berechtigungen prüfen.");
+            document.getElementById('startScanBtn').classList.remove('hidden');
+            document.getElementById('scannerContainer').classList.add('hidden');
+        });
+    });
+
+    function verifierQrCode(texteLu) {
+        if (texteLu === currentGame.qrCodeExpected) {
+            html5QrCode.stop().then(() => {
+                document.getElementById('scannerContainer').classList.add('hidden');
+                handleFinish();
+            });
+        } else {
+            // Son court / feedback visuel sans interrompre le scan
+            const card = document.querySelector('.game-card');
+            card.style.border = '2px solid #dc2626';
+            setTimeout(() => card.style.border = '', 800);
+        }
+    }
+
+    // ─── FINISH ────────────────────────────────────────────────────────────────
+    async function handleFinish() {
+        if (playerFinished || opponentFinished) return;
+        playerFinished = true;
+
+        clearInterval(timerInterval);   // FIX: arrêter le timer
+
+        const timeEl  = document.getElementById('timer');
+        const timeLeft = parseInt(timeEl.textContent);
+        const elapsed  = currentGame.duration - timeLeft;
+
+        document.getElementById('playerBox').classList.add('finished');
+
+        try {
+            const { data: me } = await supabaseClient.from('players').select('points').eq('id', playerId).single();
+            await supabaseClient.from('players')
+                .update({ points: (me.points || 0) + 1, status: 'finished' })
+                .eq('id', playerId);
+            await supabaseClient.from('scores').insert([{
+                player_id: playerId, pair_id: currentPair.id,
+                player_name: playerName, game_name: currentGame.name,
+                time_seconds: elapsed, won: true
+            }]);
+            await supabaseClient.from('pairs').update({ status: 'finished' }).eq('id', currentPair.id);
+        } catch (err) { console.error(err); }
+
+        // Écran de victoire distinct
+        document.getElementById('victoryTime').textContent =
+            `Du hast es in ${elapsed} Sekunden geschafft!`;
+        setTimeout(() => showScreen('victoryScreen'), 500);
+    }
+
+    // ─── VICTORY / DEFEAT HELPERS (NOUVEAU) ──────────────────────────────────
+    function showDefeat(reason) {
+        if (reason === 'timeout') {
+            document.getElementById('defeatSubtitle').textContent = 'Die Zeit ist abgelaufen.';
+            document.querySelector('#defeatBanner h3').textContent  = '⏰ Zeit abgelaufen!';
+            document.getElementById('defeatMessage').textContent    = 'Du hast den Baum nicht rechtzeitig gefunden.';
+            document.getElementById('defeatBanner').className = 'result-banner timeout';
+        } else {
+            document.getElementById('defeatSubtitle').textContent = 'Dein Gegner war schneller.';
+            document.querySelector('#defeatBanner h3').textContent  = '❌ Nicht diesmal!';
+            document.getElementById('defeatMessage').textContent    = 'Versuche es beim nächsten Spiel erneut.';
+            document.getElementById('defeatBanner').className = 'result-banner lose';
+        }
+        // Arrêter le scanner si actif
+        if (html5QrCode && html5QrCode.isScanning) {
+            html5QrCode.stop().catch(e => console.error(e));
+        }
+        document.getElementById('scannerContainer').classList.add('hidden');
+        setTimeout(() => showScreen('defeatScreen'), 500);
+    }
+
+    // ─── SUBSCRIBE TO SCORES ──────────────────────────────────────────────────
+    function subscribeToScores() {
+        if (gameChannel) supabaseClient.removeChannel(gameChannel);
+        gameChannel = supabaseClient.channel('score-' + currentPair.id)
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'scores' }, (payload) => {
+                if (payload.new.pair_id !== currentPair.id) return;
+                if (payload.new.player_id !== playerId) {
+                    // L'adversaire a fini
+                    if (!playerFinished) {
                         opponentFinished = true;
+                        clearInterval(timerInterval);   // FIX
                         document.getElementById('opponentBox').classList.add('finished');
-                        document.getElementById('playerBox').classList.add('lost');
-                        document.getElementById('lossMessage').classList.remove('hidden');
-                        document.getElementById('finishBtn').disabled = true;
-                        document.getElementById('finishBtn').textContent = '❌ Verloren';
-                        clearInterval(timerInterval);
-                        setTimeout(() => loadLeaderboard(), 3000);
-                    } else {
-                        setTimeout(() => loadLeaderboard(), 3000);
+                        showDefeat('opponent');
                     }
                 }
             }).subscribe();
+
+        // Écouter aussi la fin forcée par admin
+        supabaseClient.channel('pair-force-' + currentPair.id)
+            .on('postgres_changes', {
+                event: 'UPDATE', schema: 'public', table: 'pairs',
+                filter: 'id=eq.' + currentPair.id
+            }, async (payload) => {
+                if (payload.new.status === 'finished' && !playerFinished && !opponentFinished) {
+                    clearInterval(timerInterval);
+                    showDefeat('timeout');
+                }
+            }).subscribe();
+    }
+
+    // ─── LEADERBOARD ──────────────────────────────────────────────────────────
+    async function loadLeaderboard() {
+        const { data } = await supabaseClient.from('players')
+            .select('name, points').eq('is_admin', false)
+            .order('points', { ascending: false });
+        const list = document.getElementById('scoresList');
+        list.innerHTML = '';
+        if (!data || data.length === 0) {
+            list.innerHTML = '<p style="text-align:center;color:var(--muted);">Noch keine Ergebnisse</p>';
+        } else {
+            data.forEach((p, i) => {
+                const div = document.createElement('div');
+                div.className = 'score-item' + (i === 0 ? ' gold' : i === 1 ? ' silver' : i === 2 ? ' bronze' : '');
+                div.innerHTML = `
+                    <div style="display:flex;align-items:center;">
+                        <span class="rank">${i + 1}</span>
+                        <p style="font-weight:700;">${p.name}</p>
+                    </div>
+                    <p style="font-size:20px;font-weight:700;">${p.points} Pkt.</p>`;
+                list.appendChild(div);
+            });
         }
+        showScreen('leaderboardScreen');
+    }
 
-        async function loadLeaderboard() {
-            const { data } = await supabaseClient.from('players').select('name, points').eq('is_admin', false).order('points', { ascending: false });
-            const list = document.getElementById('scoresList');
-            list.innerHTML = '';
-
-            if (!data || data.length === 0) {
-                list.innerHTML = '<p style="text-align: center; color: #666;">Noch keine Ergebnisse</p>';
-            } else {
-                data.forEach((p, i) => {
-                    const div = document.createElement('div');
-                    div.className = 'score-item';
-                    if (i === 0) div.classList.add('gold');
-                    if (i === 1) div.classList.add('silver');
-                    if (i === 2) div.classList.add('bronze');
-                    div.innerHTML = `
-                        <div style="display: flex; align-items: center;">
-                            <span class="rank">${i + 1}</span>
-                            <p style="font-weight: bold;">${p.name}</p>
-                        </div>
-                        <p style="font-size: 20px; font-weight: bold;">${p.points} pts</p>
-                    `;
-                    list.appendChild(div);
-                });
-            }
-            showScreen('leaderboardScreen');
+    // ─── REPLAY ───────────────────────────────────────────────────────────────
+    async function resetGame() {
+        await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId);
+        currentPair      = null; currentGame = null;
+        playerFinished   = false; opponentFinished = false;
+        if (html5QrCode && html5QrCode.isScanning) {
+            html5QrCode.stop().catch(e => console.error(e));
         }
+        document.getElementById('scannerContainer').classList.add('hidden');
+        document.getElementById('startScanBtn').classList.remove('hidden');
+        document.getElementById('finishBtn').classList.add('hidden');
+        document.getElementById('playerBox').classList.remove('finished', 'lost');
+        document.getElementById('opponentBox').classList.remove('finished');
+        showScreen('waitingScreen');
+        updateWaitingCount();
+        listenForPairing();
+    }
 
-async function resetGame() {
-            await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId);
-            currentPair = null;
-            currentGame = null;
-            playerFinished = false;
-            opponentFinished = false;
-            document.getElementById('playerBox').classList.remove('finished', 'lost');
-            document.getElementById('opponentBox').classList.remove('finished');
-            document.getElementById('lossMessage').classList.add('hidden');
-            document.getElementById('finishBtn').disabled = false;
-            document.getElementById('finishBtn').textContent = '✓ Fertig!';
-            
-            // SÉCURITÉ : S'assurer que le scanner est bien caché/arrêté pour la prochaine partie
-            if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().catch(err => console.error(err));
-            }
-            document.getElementById('scannerContainer').classList.add('hidden');
-            document.getElementById('startScanBtn').classList.remove('hidden');
+    // ─── CLEANUP ──────────────────────────────────────────────────────────────
+    window.addEventListener('beforeunload', async () => {
+        if (playerId) await supabaseClient.from('players').delete().eq('id', playerId);
+    });
 
-            showScreen('waitingScreen');
-            updateWaitingCount();
-            listenForPairing();
-        }
-        window.addEventListener('beforeunload', async () => {
-            if (playerId) await supabaseClient.from('players').delete().eq('id', playerId);
-        });
-
-        document.getElementById('loginBtn').addEventListener('click', handleLogin);
-        document.getElementById('adminStartGameBtn').addEventListener('click', adminStartGame);
-        document.getElementById('resetGamesBtn').addEventListener('click', resetUsedGames);
-        document.getElementById('finishBtn').addEventListener('click', handleFinish);
-        document.getElementById('replayBtn').addEventListener('click', resetGame);
-        document.getElementById('playerNameInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleLogin();
-        });
-    </script>
+    // ─── EVENTS ───────────────────────────────────────────────────────────────
+    document.getElementById('loginBtn').addEventListener('click', handleLogin);
+    document.getElementById('playerNameInput').addEventListener('keypress', e => { if (e.key === 'Enter') handleLogin(); });
+    document.getElementById('adminStartGameBtn').addEventListener('click', adminStartGame);
+    document.getElementById('resetGamesBtn').addEventListener('click', resetUsedGames);
+    document.getElementById('finishBtn').addEventListener('click', handleFinish);
+    document.getElementById('replayBtn').addEventListener('click', resetGame);
+    document.getElementById('victoryLeaderboardBtn').addEventListener('click', loadLeaderboard);
+    document.getElementById('defeatLeaderboardBtn').addEventListener('click', loadLeaderboard);
+</script>
 </body>
 </html>
