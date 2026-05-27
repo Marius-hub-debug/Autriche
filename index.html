@@ -571,6 +571,7 @@
 
             const card = document.createElement('div');
             card.className = 'pair-card';
+            card.setAttribute('data-pair-id', pair.id);  // FIX 4 : identifiant pour retrait DOM immédiat
             card.innerHTML = `
                 <div>
                     <div class="names">
@@ -588,6 +589,10 @@
     async function adminForceEndPair(pairId) {
         if (!confirm('Terminer cette partie de force ?')) return;
         try {
+            // FIX 4a : retrait immédiat du DOM sans attendre la base
+            const cardToRemove = document.querySelector(`[data-pair-id="${pairId}"]`);
+            if (cardToRemove) cardToRemove.remove();
+
             const { data: pair } = await supabaseClient.from('pairs').select('player1_id, player2_id').eq('id', pairId).single();
             if (pair) {
                 await supabaseClient.from('players')
@@ -595,8 +600,9 @@
                     .in('id', [pair.player1_id, pair.player2_id]);
             }
             await supabaseClient.from('pairs').update({ status: 'finished' }).eq('id', pairId);
-            loadAdminPairList();
-            refreshAdminCounts();
+
+            // FIX 4b : délai pour laisser la réplication DB se propager avant de re-requêter
+            setTimeout(() => { loadAdminPairList(); refreshAdminCounts(); }, 600);
         } catch (err) {
             console.error(err);
             alert('Erreur : ' + err.message);
@@ -613,8 +619,8 @@
             })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'pairs' }, () => {
                 refreshAdminCounts();
-                // FIX 4 : recharge toujours la liste des paires actives pour effacer les terminées
-                loadAdminPairList();
+                // FIX 4 : délai de 600ms pour laisser la réplication se propager avant la re-requête
+                setTimeout(() => loadAdminPairList(), 600);
             })
             .subscribe();
     }
@@ -704,55 +710,75 @@
     }
 
     // ─── PAIRING LISTENER ──────────────────────────────────────────────────
-    // FIX 1 : nom de canal unique à chaque appel pour permettre la réinscription
+    // FIX 1 : remplacement du realtime filtré (non fiable sans REPLICA IDENTITY FULL)
+    // par un polling toutes les 2 secondes — simple, robuste, garanti de fonctionner.
+    let pairingInterval = null;
+    let pairingHandling = false; // garde anti double-déclenchement
+
     function listenForPairing() {
-        if (pairingChannel) {
-            supabaseClient.removeChannel(pairingChannel);
-            pairingChannel = null;
-        }
-        pairingChannel = supabaseClient.channel('pairing-' + playerId + '-' + Date.now())
-            .on('postgres_changes', {
-                event: 'UPDATE', schema: 'public', table: 'players',
-                filter: 'id=eq.' + playerId
-            }, async (payload) => {
-                if (payload.new.status === 'paired') {
-                    const { data: pairData } = await supabaseClient.from('pairs')
-                        .select('*')
-                        .or(`player1_id.eq.${playerId},player2_id.eq.${playerId}`)
-                        .eq('status', 'active').single();
-                    if (!pairData) return;
+        stopPairingListen();
+        pairingHandling = false;
 
-                    currentPair = pairData;
-                    const isP1       = currentPair.player1_id === playerId;
-                    const opponentId = isP1 ? currentPair.player2_id : currentPair.player1_id;
+        pairingInterval = setInterval(async () => {
+            if (pairingHandling) return;
+            try {
+                const { data } = await supabaseClient
+                    .from('players')
+                    .select('status')
+                    .eq('id', playerId)
+                    .single();
 
-                    const { data: opData } = await supabaseClient.from('players').select('name, points').eq('id', opponentId).single();
-                    const { data: myData } = await supabaseClient.from('players').select('points').eq('id', playerId).single();
-
-                    currentGame = MINIGAMES.find(g => g.id === currentPair.game_id);
-
-                    document.getElementById('opponentName').textContent        = opData.name;
-                    document.getElementById('opponentNameDisplay').textContent  = opData.name;
-                    document.getElementById('playerNameDisplay').textContent    = playerName;
-                    document.getElementById('playerPoints').textContent         = myData.points || 0;
-                    document.getElementById('opponentPoints').textContent       = opData.points || 0;
-                    document.getElementById('gameName').textContent             = currentGame.name;
-                    document.getElementById('gameDescription').textContent      = currentGame.description;
-
-                    // Réinitialiser l'UI
-                    playerFinished   = false;
-                    opponentFinished = false;
-                    document.getElementById('playerBox').classList.remove('finished', 'lost');
-                    document.getElementById('opponentBox').classList.remove('finished');
-                    document.getElementById('startScanBtn').classList.remove('hidden');
-                    document.getElementById('finishBtn').classList.add('hidden');
-                    document.getElementById('scannerContainer').classList.add('hidden');
-
-                    showScreen('playingScreen');
-                    startTimer(currentGame.duration);
-                    subscribeToScores();
+                if (data && data.status === 'paired') {
+                    pairingHandling = true;
+                    stopPairingListen();
+                    await handlePairingDetected();
                 }
-            }).subscribe();
+            } catch (e) { console.error('Polling error:', e); }
+        }, 2000);
+    }
+
+    function stopPairingListen() {
+        if (pairingChannel) { supabaseClient.removeChannel(pairingChannel); pairingChannel = null; }
+        if (pairingInterval) { clearInterval(pairingInterval); pairingInterval = null; }
+    }
+
+    async function handlePairingDetected() {
+        const { data: pairData } = await supabaseClient.from('pairs')
+            .select('*')
+            .or(`player1_id.eq.${playerId},player2_id.eq.${playerId}`)
+            .eq('status', 'active')
+            .single();
+        if (!pairData) { pairingHandling = false; listenForPairing(); return; } // pas encore dispo, on reprend
+
+        currentPair = pairData;
+        const isP1       = currentPair.player1_id === playerId;
+        const opponentId = isP1 ? currentPair.player2_id : currentPair.player1_id;
+
+        const { data: opData } = await supabaseClient.from('players').select('name, points').eq('id', opponentId).single();
+        const { data: myData } = await supabaseClient.from('players').select('points').eq('id', playerId).single();
+
+        currentGame = MINIGAMES.find(g => g.id === currentPair.game_id);
+
+        document.getElementById('opponentName').textContent        = opData.name;
+        document.getElementById('opponentNameDisplay').textContent  = opData.name;
+        document.getElementById('playerNameDisplay').textContent    = playerName;
+        document.getElementById('playerPoints').textContent         = myData.points || 0;
+        document.getElementById('opponentPoints').textContent       = opData.points || 0;
+        document.getElementById('gameName').textContent             = currentGame.name;
+        document.getElementById('gameDescription').textContent      = currentGame.description;
+
+        // Réinitialiser l'UI
+        playerFinished   = false;
+        opponentFinished = false;
+        document.getElementById('playerBox').classList.remove('finished', 'lost');
+        document.getElementById('opponentBox').classList.remove('finished');
+        document.getElementById('startScanBtn').classList.remove('hidden');
+        document.getElementById('finishBtn').classList.add('hidden');
+        document.getElementById('scannerContainer').classList.add('hidden');
+
+        showScreen('playingScreen');
+        startTimer(currentGame.duration);
+        subscribeToScores();
     }
 
     // ─── TIMER ────────────────────────────────────────────────────────────
@@ -937,7 +963,8 @@
 
     // ─── REPLAY ───────────────────────────────────────────────────────────
     async function resetGame() {
-        // FIX 4 : nettoyage propre de tous les canaux de jeu
+        // Arrêter le polling et nettoyer les canaux de jeu
+        stopPairingListen();
         if (gameChannel)     { supabaseClient.removeChannel(gameChannel);     gameChannel = null; }
         if (forceEndChannel) { supabaseClient.removeChannel(forceEndChannel); forceEndChannel = null; }
 
