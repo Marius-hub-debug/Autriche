@@ -41,7 +41,6 @@
             padding: 20px;
         }
 
-        /* ── CONTAINER ── */
         .container {
             background: var(--card);
             border-radius: 24px;
@@ -52,7 +51,6 @@
             border: 1px solid var(--border);
         }
 
-        /* ── TYPOGRAPHY ── */
         h1 {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 42px;
@@ -68,7 +66,6 @@
             font-size: 15px;
         }
 
-        /* ── ICON BOX ── */
         .icon-box {
             display: flex;
             align-items: center;
@@ -80,7 +77,6 @@
             box-shadow: 0 8px 24px rgba(237,41,57,0.3);
         }
 
-        /* ── INPUTS ── */
         input {
             width: 100%;
             padding: 14px 16px;
@@ -95,7 +91,6 @@
         }
         input:focus { outline: none; border-color: var(--red); background: white; }
 
-        /* ── BUTTONS ── */
         button {
             width: 100%;
             padding: 14px;
@@ -126,7 +121,6 @@
         .btn-outline:hover:not(:disabled) { border-color: var(--red); color: var(--red); box-shadow: none; }
         .btn-sm { padding: 8px 14px; font-size: 13px; width: auto; }
 
-        /* ── INFO BOX ── */
         .info-box {
             background: var(--bg);
             padding: 18px 20px;
@@ -136,7 +130,6 @@
             border: 1px solid var(--border);
         }
 
-        /* ── TIMER ── */
         .timer {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 56px;
@@ -151,7 +144,6 @@
             50% { opacity: 0.6; }
         }
 
-        /* ── GAME CARD ── */
         .game-card {
             background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
             padding: 24px;
@@ -162,7 +154,6 @@
         .game-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--text); margin-bottom: 8px; letter-spacing: 0.5px; }
         .game-card p  { font-size: 15px; color: #555; line-height: 1.5; }
 
-        /* ── PLAYER GRID ── */
         .player-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
         .player-box {
             padding: 16px;
@@ -175,7 +166,6 @@
         .player-box.finished { background: var(--success-light); border-color: #86efac; }
         .player-box.lost     { background: var(--danger-light);  border-color: #fca5a5; }
 
-        /* ── RESULT MESSAGES ── */
         .result-banner {
             padding: 20px;
             border-radius: 16px;
@@ -192,7 +182,6 @@
         .result-banner.timeout { background: #fff7ed; border-color: #fdba74; }
         .result-banner.timeout h3 { color: #ea580c; }
 
-        /* ── SCORES ── */
         .scores-container { max-height: 420px; overflow-y: auto; }
         .score-item {
             display: flex;
@@ -214,7 +203,6 @@
         .score-item.silver .rank { color: var(--silver); }
         .score-item.bronze .rank { color: var(--bronze); }
 
-        /* ── ADMIN SPECIFIC ── */
         .pair-card {
             background: var(--bg);
             border: 1px solid var(--border);
@@ -239,7 +227,6 @@
         }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-        /* ── TABS (admin) ── */
         .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
         .tab-btn {
             flex: 1; padding: 10px; border-radius: 10px;
@@ -251,7 +238,6 @@
         .tab-btn.active { background: var(--red); border-color: var(--red); color: white; }
         .tab-btn:hover:not(.active) { border-color: var(--red); color: var(--red); transform: none; box-shadow: none; }
 
-        /* ── SCANNER ── */
         #scannerContainer {
             margin-bottom: 16px;
             border-radius: 14px;
@@ -269,11 +255,9 @@
         #qr-reader__scan_region { background: black; }
         #qr-reader__dashboard_section_csr span { color: var(--red) !important; }
 
-        /* ── VICTORY / DEFEAT SCREENS ── */
         .result-screen-icon { font-size: 80px; text-align: center; margin-bottom: 16px; animation: bounce-in 0.5s cubic-bezier(0.34,1.56,0.64,1); }
         @keyframes bounce-in { 0%{transform:scale(0);opacity:0} 100%{transform:scale(1);opacity:1} }
 
-        /* ── MISC ── */
         .hidden { display: none !important; }
         .trophy { font-size: 64px; text-align: center; margin-bottom: 16px; }
         .error-message {
@@ -283,12 +267,6 @@
             border: 1px solid #fca5a5;
         }
         .divider { height: 1px; background: var(--border); margin: 20px 0; }
-        .badge {
-            display: inline-block; padding: 3px 10px;
-            border-radius: 20px; font-size: 12px; font-weight: 700;
-        }
-        .badge-active { background: #dcfce7; color: #16a34a; }
-        .badge-waiting { background: #fef9c3; color: #92400e; }
     </style>
 </head>
 <body>
@@ -309,32 +287,32 @@
     <button class="btn-primary" id="loginBtn">Mit dem Spiel verbinden!</button>
 </div>
 
-<!-- ════════════════ ADMIN ════════════════ -->
+<!-- ════════════════ ADMIN (EN FRANÇAIS) ════════════════ -->
 <div id="adminScreen" class="container hidden">
-    <h1>🎮 Admin Panel</h1>
-    <p class="subtitle">Verwalte Mini-Spiele und Spieler</p>
+    <h1>🎮 Panneau Admin</h1>
+    <p class="subtitle">Gérer les mini-jeux et les joueurs</p>
 
     <div class="tabs">
-        <button class="tab-btn active" id="tabWaiting" onclick="switchTab('waiting')">⏳ Wartend (<span id="adminWaitingCount">0</span>)</button>
-        <button class="tab-btn"        id="tabActive"  onclick="switchTab('active')">🎮 Aktiv (<span id="adminActiveCount">0</span>)</button>
+        <button class="tab-btn active" id="tabWaiting" onclick="switchTab('waiting')">⏳ En attente (<span id="adminWaitingCount">0</span>)</button>
+        <button class="tab-btn"        id="tabActive"  onclick="switchTab('active')">🎮 Actif (<span id="adminActiveCount">0</span>)</button>
     </div>
 
-    <!-- Wartende Spieler -->
+    <!-- Joueurs en attente -->
     <div id="panelWaiting">
-        <button class="btn-success" id="adminStartGameBtn">▶️ Mini-Spiel für ALLE starten</button>
+        <button class="btn-success" id="adminStartGameBtn">▶️ Lancer un mini-jeu pour TOUS</button>
         <div class="divider"></div>
-        <h3 style="margin-bottom:12px; font-size:16px;">Spielerliste</h3>
+        <h3 style="margin-bottom:12px; font-size:16px;">Liste des joueurs</h3>
         <div id="adminPlayerList"></div>
     </div>
 
-    <!-- Aktive Partien -->
+    <!-- Parties actives -->
     <div id="panelActive" class="hidden">
-        <p class="subtitle" style="margin-bottom:16px;">Laufende Partien in Echtzeit</p>
+        <p class="subtitle" style="margin-bottom:16px;">Parties en cours en temps réel</p>
         <div id="adminPairList"></div>
     </div>
 
     <div class="divider"></div>
-    <button class="btn-danger" id="resetGamesBtn">🔄 Alles zurücksetzen</button>
+    <button class="btn-danger" id="resetGamesBtn">🔄 Tout réinitialiser</button>
 </div>
 
 <!-- ════════════════ WAITING ════════════════ -->
@@ -408,7 +386,7 @@
     <h1 style="color:#dc2626;">Verloren…</h1>
     <p class="subtitle" id="defeatSubtitle">Dein Gegner war schneller.</p>
     <div class="result-banner lose" id="defeatBanner">
-        <h3>❌ Nicht diesmal!</h3>
+        <h3 id="defeatBannerTitle">❌ Nicht diesmal!</h3>
         <p id="defeatMessage">Versuche es beim nächsten Spiel erneut.</p>
     </div>
     <button class="btn-outline" id="defeatLeaderboardBtn" style="margin-top:12px; color:var(--text);">📊 Rangliste ansehen</button>
@@ -428,7 +406,7 @@
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
     // ─── CONFIG ───────────────────────────────────────────────────────────
-    const ADMIN_PASSWORD = "M.lefol";   // ⚠️ À sécuriser côté serveur idéalement
+    const ADMIN_PASSWORD = "M.lefol";
     const SUPABASE_URL   = 'https://usyaqoqacryoyhzlvanj.supabase.co';
     const SUPABASE_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzeWFxb3FhY3J5b3loemx2YW5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0Njc4MTUsImV4cCI6MjA5NTA0MzgxNX0.jIBdiW8pP1vGAnNk2kFRmXDHct34RtnhkuUMNq6od8k';
 
@@ -448,18 +426,20 @@
     ];
 
     // ─── STATE ────────────────────────────────────────────────────────────
-    let playerId        = null;
-    let playerName      = '';
-    let isAdmin         = false;
-    let currentPair     = null;
-    let currentGame     = null;
-    let timerInterval   = null;
-    let playerFinished  = false;
-    let opponentFinished= false;
-    let gameChannel     = null;
-    let pairingChannel  = null;
-    let adminChannel    = null;
-    let html5QrCode     = null;
+    let playerId         = null;
+    let playerName       = '';
+    let isAdmin          = false;
+    let currentPair      = null;
+    let currentGame      = null;
+    let timerInterval    = null;
+    let playerFinished   = false;
+    let opponentFinished = false;
+    let gameChannel      = null;
+    let pairingChannel   = null;
+    let adminChannel     = null;
+    let forceEndChannel  = null;   // FIX 4 : stocké pour pouvoir être nettoyé
+    let waitingChannel   = null;   // FIX 2 : canal realtime pour le compteur d'attente
+    let html5QrCode      = null;
 
     // ─── HELPERS ──────────────────────────────────────────────────────────
     function showScreen(id) {
@@ -512,6 +492,7 @@
                 document.getElementById('welcomeText').textContent = `Willkommen, ${playerName}! 👋`;
                 showScreen('waitingScreen');
                 updateWaitingCount();
+                subscribeWaitingCount();  // FIX 2 : abonnement realtime
                 listenForPairing();
             }
         } catch (err) {
@@ -526,6 +507,15 @@
             .select('*', { count: 'exact', head: true })
             .eq('status', 'waiting').eq('is_admin', false);
         document.getElementById('waitingCount').textContent = count || 0;
+    }
+
+    // FIX 2 : abonnement realtime pour mettre à jour le compteur en temps réel
+    function subscribeWaitingCount() {
+        if (waitingChannel) supabaseClient.removeChannel(waitingChannel);
+        waitingChannel = supabaseClient.channel('waiting-count-' + Date.now())
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'players' }, () => {
+                updateWaitingCount();
+            }).subscribe();
     }
 
     async function refreshAdminCounts() {
@@ -548,7 +538,7 @@
         const list = document.getElementById('adminPlayerList');
         list.innerHTML = '';
         if (!data || data.length === 0) {
-            list.innerHTML = '<p style="text-align:center;color:var(--muted);padding:20px;">Kein Spieler wartet</p>';
+            list.innerHTML = '<p style="text-align:center;color:var(--muted);padding:20px;">Aucun joueur en attente</p>';
             return;
         }
         data.forEach((p, i) => {
@@ -557,12 +547,12 @@
             div.style.marginBottom = '10px';
             div.innerHTML = `
                 <p style="font-weight:700;">${i + 1}. ${p.name}</p>
-                <p style="font-size:12px;color:var(--muted);">Punkte: ${p.points || 0}</p>`;
+                <p style="font-size:12px;color:var(--muted);">Points : ${p.points || 0}</p>`;
             list.appendChild(div);
         });
     }
 
-    // ─── ADMIN – PAIRES ACTIVES (NOUVEAU) ──────────────────────────────────
+    // ─── ADMIN – PAIRES ACTIVES ──────────────────────────────────────────────
     async function loadAdminPairList() {
         const { data: pairs } = await supabaseClient.from('pairs')
             .select('*').eq('status', 'active');
@@ -570,7 +560,7 @@
         list.innerHTML = '';
 
         if (!pairs || pairs.length === 0) {
-            list.innerHTML = '<p style="text-align:center;color:var(--muted);padding:20px;">Keine aktiven Partien</p>';
+            list.innerHTML = '<p style="text-align:center;color:var(--muted);padding:20px;">Aucune partie active</p>';
             return;
         }
 
@@ -587,46 +577,44 @@
                         <span class="status-dot"></span>
                         ${p1 ? p1.name : '?'} <span class="vs">VS</span> ${p2 ? p2.name : '?'}
                     </div>
-                    <div class="game-label">🌳 ${game ? game.name : 'Unbekanntes Spiel'}</div>
+                    <div class="game-label">🌳 ${game ? game.name : 'Jeu inconnu'}</div>
                 </div>
-                <button class="btn-warning btn-sm" onclick="adminForceEndPair('${pair.id}')">⏹ Beenden</button>`;
+                <button class="btn-warning btn-sm" onclick="adminForceEndPair('${pair.id}')">⏹ Terminer</button>`;
             list.appendChild(card);
         }
     }
 
-    // ─── ADMIN – FORCER FIN D'UNE PARTIE (NOUVEAU) ──────────────────────────
+    // ─── ADMIN – FORCER FIN D'UNE PARTIE ──────────────────────────────────
     async function adminForceEndPair(pairId) {
-        if (!confirm('Diese Partie wirklich zwangsweise beenden?')) return;
+        if (!confirm('Terminer cette partie de force ?')) return;
         try {
-            await supabaseClient.from('pairs').update({ status: 'finished' }).eq('id', pairId);
-            // Remettre les joueurs en waiting
             const { data: pair } = await supabaseClient.from('pairs').select('player1_id, player2_id').eq('id', pairId).single();
             if (pair) {
                 await supabaseClient.from('players')
                     .update({ status: 'waiting' })
                     .in('id', [pair.player1_id, pair.player2_id]);
             }
+            await supabaseClient.from('pairs').update({ status: 'finished' }).eq('id', pairId);
             loadAdminPairList();
             refreshAdminCounts();
         } catch (err) {
             console.error(err);
-            alert('Fehler: ' + err.message);
+            alert('Erreur : ' + err.message);
         }
     }
 
-    // ─── ADMIN – REALTIME (NOUVEAU) ──────────────────────────────────────────
+    // ─── ADMIN – REALTIME ──────────────────────────────────────────────────
     function subscribeAdminRealtime() {
         if (adminChannel) supabaseClient.removeChannel(adminChannel);
-        adminChannel = supabaseClient.channel('admin-watch')
+        adminChannel = supabaseClient.channel('admin-watch-' + Date.now())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'players' }, () => {
                 refreshAdminCounts();
                 loadAdminPlayerList();
             })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'pairs' }, () => {
                 refreshAdminCounts();
-                if (!document.getElementById('panelActive').classList.contains('hidden')) {
-                    loadAdminPairList();
-                }
+                // FIX 4 : recharge toujours la liste des paires actives pour effacer les terminées
+                loadAdminPairList();
             })
             .subscribe();
     }
@@ -635,15 +623,15 @@
     async function adminStartGame() {
         const btn = document.getElementById('adminStartGameBtn');
         btn.disabled = true;
-        btn.textContent = '⏳ Starten…';
+        btn.textContent = '⏳ Lancement…';
 
         try {
             const { data: players } = await supabaseClient.from('players')
                 .select('*').eq('status', 'waiting').eq('is_admin', false);
 
             if (!players || players.length === 0) {
-                alert('Kein Spieler wartet!');
-                btn.disabled = false; btn.textContent = '▶️ Mini-Spiel für ALLE starten';
+                alert('Aucun joueur en attente !');
+                btn.disabled = false; btn.textContent = '▶️ Lancer un mini-jeu pour TOUS';
                 return;
             }
 
@@ -675,8 +663,8 @@
                 const available = MINIGAMES.filter(g =>
                     !p1g.includes(g.id) && !p2g.includes(g.id) && !usedInRound.includes(g.id));
                 if (available.length === 0) {
-                    alert(`Kein Spiel mehr verfügbar für ${p1.name} und ${p2.name}!`);
-                    btn.disabled = false; btn.textContent = '▶️ Mini-Spiel für ALLE starten';
+                    alert(`Plus aucun jeu disponible pour ${p1.name} et ${p2.name} !`);
+                    btn.disabled = false; btn.textContent = '▶️ Lancer un mini-jeu pour TOUS';
                     return;
                 }
                 const game = available[Math.floor(Math.random() * available.length)];
@@ -693,32 +681,36 @@
                 }]);
             }
 
-            alert(`${pairs.length} Paar(e) gestartet!\n${pairs.map(p => `${p.player1.name} vs ${p.player2.name} → ${p.game.name}`).join('\n')}`);
+            alert(`${pairs.length} paire(s) lancée(s) !\n${pairs.map(p => `${p.player1.name} vs ${p.player2.name} → ${p.game.name}`).join('\n')}`);
             refreshAdminCounts(); loadAdminPlayerList();
         } catch (err) {
-            console.error(err); alert('Fehler: ' + err.message);
+            console.error(err); alert('Erreur : ' + err.message);
         }
 
-        btn.disabled = false; btn.textContent = '▶️ Mini-Spiel für ALLE starten';
+        btn.disabled = false; btn.textContent = '▶️ Lancer un mini-jeu pour TOUS';
     }
 
-    // ─── ADMIN – RESET ────────────────────────────────────────────────────────
+    // ─── ADMIN – RESET ─────────────────────────────────────────────────────
     async function resetUsedGames() {
-        if (!confirm('Alle Mini-Spiele und Punkte zurücksetzen?')) return;
+        if (!confirm('Réinitialiser tous les mini-jeux et les points ?')) return;
         try {
             const NULL_UUID = '00000000-0000-0000-0000-000000000000';
             await supabaseClient.from('scores').delete().neq('id', NULL_UUID);
             await supabaseClient.from('pairs').delete().neq('id', NULL_UUID);
             await supabaseClient.from('players').update({ points: 0 }).neq('id', NULL_UUID);
-            alert('Zurückgesetzt! Alle Spieler können von vorne beginnen.');
+            alert('Réinitialisé ! Tous les joueurs peuvent repartir de zéro.');
             refreshAdminCounts(); loadAdminPlayerList();
         } catch (err) { console.error(err); }
     }
 
-    // ─── PAIRING LISTENER ─────────────────────────────────────────────────────
+    // ─── PAIRING LISTENER ──────────────────────────────────────────────────
+    // FIX 1 : nom de canal unique à chaque appel pour permettre la réinscription
     function listenForPairing() {
-        if (pairingChannel) supabaseClient.removeChannel(pairingChannel);
-        pairingChannel = supabaseClient.channel('public:players:' + playerId)
+        if (pairingChannel) {
+            supabaseClient.removeChannel(pairingChannel);
+            pairingChannel = null;
+        }
+        pairingChannel = supabaseClient.channel('pairing-' + playerId + '-' + Date.now())
             .on('postgres_changes', {
                 event: 'UPDATE', schema: 'public', table: 'players',
                 filter: 'id=eq.' + playerId
@@ -731,7 +723,7 @@
                     if (!pairData) return;
 
                     currentPair = pairData;
-                    const isP1      = currentPair.player1_id === playerId;
+                    const isP1       = currentPair.player1_id === playerId;
                     const opponentId = isP1 ? currentPair.player2_id : currentPair.player1_id;
 
                     const { data: opData } = await supabaseClient.from('players').select('name, points').eq('id', opponentId).single();
@@ -739,15 +731,17 @@
 
                     currentGame = MINIGAMES.find(g => g.id === currentPair.game_id);
 
-                    document.getElementById('opponentName').textContent       = opData.name;
-                    document.getElementById('opponentNameDisplay').textContent = opData.name;
-                    document.getElementById('playerNameDisplay').textContent   = playerName;
-                    document.getElementById('playerPoints').textContent        = myData.points || 0;
-                    document.getElementById('opponentPoints').textContent      = opData.points || 0;
-                    document.getElementById('gameName').textContent            = currentGame.name;
-                    document.getElementById('gameDescription').textContent     = currentGame.description;
+                    document.getElementById('opponentName').textContent        = opData.name;
+                    document.getElementById('opponentNameDisplay').textContent  = opData.name;
+                    document.getElementById('playerNameDisplay').textContent    = playerName;
+                    document.getElementById('playerPoints').textContent         = myData.points || 0;
+                    document.getElementById('opponentPoints').textContent       = opData.points || 0;
+                    document.getElementById('gameName').textContent             = currentGame.name;
+                    document.getElementById('gameDescription').textContent      = currentGame.description;
 
-                    // Réinitialiser l'UI de jeu
+                    // Réinitialiser l'UI
+                    playerFinished   = false;
+                    opponentFinished = false;
                     document.getElementById('playerBox').classList.remove('finished', 'lost');
                     document.getElementById('opponentBox').classList.remove('finished');
                     document.getElementById('startScanBtn').classList.remove('hidden');
@@ -761,7 +755,7 @@
             }).subscribe();
     }
 
-    // ─── TIMER (avec couleurs) ────────────────────────────────────────────────
+    // ─── TIMER ────────────────────────────────────────────────────────────
     function startTimer(duration) {
         let time = duration;
         const timerEl = document.getElementById('timer');
@@ -772,8 +766,6 @@
         timerInterval = setInterval(() => {
             time--;
             timerEl.textContent = `${time}s`;
-
-            // ── Couleur progressive ──
             if (time <= 30) {
                 timerEl.className = 'timer danger';
             } else if (time <= 60) {
@@ -781,25 +773,24 @@
             } else {
                 timerEl.className = 'timer';
             }
-
             if (time <= 0) {
                 clearInterval(timerInterval);
-                handleTimeOut();   // FIX: fin de partie automatique
+                handleTimeOut();
             }
         }, 1000);
     }
 
-    // ─── TIMEOUT (FIX) ────────────────────────────────────────────────────────
+    // ─── TIMEOUT ──────────────────────────────────────────────────────────
     async function handleTimeOut() {
         if (playerFinished || opponentFinished) return;
-        opponentFinished = true; // empêche d'autres triggers
+        opponentFinished = true;
         try {
             await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId);
         } catch (err) { console.error(err); }
         showDefeat('timeout');
     }
 
-    // ─── QR SCAN ──────────────────────────────────────────────────────────────
+    // ─── QR SCAN ──────────────────────────────────────────────────────────
     document.getElementById('startScanBtn').addEventListener('click', () => {
         document.getElementById('scannerContainer').classList.remove('hidden');
         document.getElementById('startScanBtn').classList.add('hidden');
@@ -825,21 +816,19 @@
                 handleFinish();
             });
         } else {
-            // Son court / feedback visuel sans interrompre le scan
             const card = document.querySelector('.game-card');
             card.style.border = '2px solid #dc2626';
             setTimeout(() => card.style.border = '', 800);
         }
     }
 
-    // ─── FINISH ────────────────────────────────────────────────────────────────
+    // ─── FINISH ───────────────────────────────────────────────────────────
     async function handleFinish() {
         if (playerFinished || opponentFinished) return;
         playerFinished = true;
+        clearInterval(timerInterval);
 
-        clearInterval(timerInterval);   // FIX: arrêter le timer
-
-        const timeEl  = document.getElementById('timer');
+        const timeEl   = document.getElementById('timer');
         const timeLeft = parseInt(timeEl.textContent);
         const elapsed  = currentGame.duration - timeLeft;
 
@@ -858,26 +847,24 @@
             await supabaseClient.from('pairs').update({ status: 'finished' }).eq('id', currentPair.id);
         } catch (err) { console.error(err); }
 
-        // Écran de victoire distinct
         document.getElementById('victoryTime').textContent =
             `Du hast es in ${elapsed} Sekunden geschafft!`;
         setTimeout(() => showScreen('victoryScreen'), 500);
     }
 
-    // ─── VICTORY / DEFEAT HELPERS (NOUVEAU) ──────────────────────────────────
+    // ─── DEFEAT ───────────────────────────────────────────────────────────
     function showDefeat(reason) {
         if (reason === 'timeout') {
-            document.getElementById('defeatSubtitle').textContent = 'Die Zeit ist abgelaufen.';
-            document.querySelector('#defeatBanner h3').textContent  = '⏰ Zeit abgelaufen!';
-            document.getElementById('defeatMessage').textContent    = 'Du hast den Baum nicht rechtzeitig gefunden.';
+            document.getElementById('defeatSubtitle').textContent  = 'Die Zeit ist abgelaufen.';
+            document.getElementById('defeatBannerTitle').textContent = '⏰ Zeit abgelaufen!';
+            document.getElementById('defeatMessage').textContent   = 'Du hast den Baum nicht rechtzeitig gefunden.';
             document.getElementById('defeatBanner').className = 'result-banner timeout';
         } else {
-            document.getElementById('defeatSubtitle').textContent = 'Dein Gegner war schneller.';
-            document.querySelector('#defeatBanner h3').textContent  = '❌ Nicht diesmal!';
-            document.getElementById('defeatMessage').textContent    = 'Versuche es beim nächsten Spiel erneut.';
+            document.getElementById('defeatSubtitle').textContent  = 'Dein Gegner war schneller.';
+            document.getElementById('defeatBannerTitle').textContent = '❌ Nicht diesmal!';
+            document.getElementById('defeatMessage').textContent   = 'Versuche es beim nächsten Spiel erneut.';
             document.getElementById('defeatBanner').className = 'result-banner lose';
         }
-        // Arrêter le scanner si actif
         if (html5QrCode && html5QrCode.isScanning) {
             html5QrCode.stop().catch(e => console.error(e));
         }
@@ -885,37 +872,45 @@
         setTimeout(() => showScreen('defeatScreen'), 500);
     }
 
-    // ─── SUBSCRIBE TO SCORES ──────────────────────────────────────────────────
+    // ─── SUBSCRIBE TO SCORES ──────────────────────────────────────────────
     function subscribeToScores() {
-        if (gameChannel) supabaseClient.removeChannel(gameChannel);
-        gameChannel = supabaseClient.channel('score-' + currentPair.id)
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'scores' }, (payload) => {
+        if (gameChannel)     supabaseClient.removeChannel(gameChannel);
+        if (forceEndChannel) supabaseClient.removeChannel(forceEndChannel);  // FIX 4
+
+        gameChannel = supabaseClient.channel('score-' + currentPair.id + '-' + Date.now())
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'scores' }, async (payload) => {
                 if (payload.new.pair_id !== currentPair.id) return;
                 if (payload.new.player_id !== playerId) {
-                    // L'adversaire a fini
                     if (!playerFinished) {
                         opponentFinished = true;
-                        clearInterval(timerInterval);   // FIX
+                        clearInterval(timerInterval);
                         document.getElementById('opponentBox').classList.add('finished');
+                        // FIX 4 : mettre à jour le statut du perdant
+                        try {
+                            await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId);
+                        } catch(e) { console.error(e); }
                         showDefeat('opponent');
                     }
                 }
             }).subscribe();
 
-        // Écouter aussi la fin forcée par admin
-        supabaseClient.channel('pair-force-' + currentPair.id)
+        // FIX 4 : canal stocké dans forceEndChannel pour nettoyage propre
+        forceEndChannel = supabaseClient.channel('pair-force-' + currentPair.id + '-' + Date.now())
             .on('postgres_changes', {
                 event: 'UPDATE', schema: 'public', table: 'pairs',
                 filter: 'id=eq.' + currentPair.id
             }, async (payload) => {
                 if (payload.new.status === 'finished' && !playerFinished && !opponentFinished) {
                     clearInterval(timerInterval);
+                    try {
+                        await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId);
+                    } catch(e) { console.error(e); }
                     showDefeat('timeout');
                 }
             }).subscribe();
     }
 
-    // ─── LEADERBOARD ──────────────────────────────────────────────────────────
+    // ─── LEADERBOARD ──────────────────────────────────────────────────────
     async function loadLeaderboard() {
         const { data } = await supabaseClient.from('players')
             .select('name, points').eq('is_admin', false)
@@ -940,11 +935,19 @@
         showScreen('leaderboardScreen');
     }
 
-    // ─── REPLAY ───────────────────────────────────────────────────────────────
+    // ─── REPLAY ───────────────────────────────────────────────────────────
     async function resetGame() {
+        // FIX 4 : nettoyage propre de tous les canaux de jeu
+        if (gameChannel)     { supabaseClient.removeChannel(gameChannel);     gameChannel = null; }
+        if (forceEndChannel) { supabaseClient.removeChannel(forceEndChannel); forceEndChannel = null; }
+
         await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId);
-        currentPair      = null; currentGame = null;
-        playerFinished   = false; opponentFinished = false;
+
+        currentPair      = null;
+        currentGame      = null;
+        playerFinished   = false;
+        opponentFinished = false;
+
         if (html5QrCode && html5QrCode.isScanning) {
             html5QrCode.stop().catch(e => console.error(e));
         }
@@ -953,17 +956,18 @@
         document.getElementById('finishBtn').classList.add('hidden');
         document.getElementById('playerBox').classList.remove('finished', 'lost');
         document.getElementById('opponentBox').classList.remove('finished');
+
         showScreen('waitingScreen');
         updateWaitingCount();
-        listenForPairing();
+        listenForPairing();  // FIX 1 : canal unique → la relance fonctionne
     }
 
-    // ─── CLEANUP ──────────────────────────────────────────────────────────────
+    // ─── CLEANUP ──────────────────────────────────────────────────────────
     window.addEventListener('beforeunload', async () => {
         if (playerId) await supabaseClient.from('players').delete().eq('id', playerId);
     });
 
-    // ─── EVENTS ───────────────────────────────────────────────────────────────
+    // ─── EVENTS ───────────────────────────────────────────────────────────
     document.getElementById('loginBtn').addEventListener('click', handleLogin);
     document.getElementById('playerNameInput').addEventListener('keypress', e => { if (e.key === 'Enter') handleLogin(); });
     document.getElementById('adminStartGameBtn').addEventListener('click', adminStartGame);
