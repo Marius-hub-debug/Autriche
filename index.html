@@ -849,6 +849,7 @@
     }
 
     // ─── FINISH ───────────────────────────────────────────────────────────
+    // ─── FINISH ───────────────────────────────────────────────────────────
     async function handleFinish() {
         if (playerFinished || opponentFinished) return;
         playerFinished = true;
@@ -863,7 +864,8 @@
         try {
             const { data: me } = await supabaseClient.from('players').select('points').eq('id', playerId).single();
             await supabaseClient.from('players')
-                .update({ points: (me.points || 0) + 1, status: 'finished' })
+                // 🔴 MODIFICATION 1 : On met le statut sur 'waiting' au lieu de 'finished'
+                .update({ points: (me.points || 0) + 1, status: 'waiting' })
                 .eq('id', playerId);
             await supabaseClient.from('scores').insert([{
                 player_id: playerId, pair_id: currentPair.id,
@@ -876,8 +878,14 @@
         document.getElementById('victoryTime').textContent =
             `Du hast es in ${elapsed} Sekunden geschafft!`;
         setTimeout(() => showScreen('victoryScreen'), 500);
-    }
 
+        // 🔴 MODIFICATION 2 : On nettoie les canaux de la partie qui vient de se terminer
+        if (gameChannel)     { supabaseClient.removeChannel(gameChannel);     gameChannel = null; }
+        if (forceEndChannel) { supabaseClient.removeChannel(forceEndChannel); forceEndChannel = null; }
+        
+        // 🔴 MODIFICATION 3 : On relance l'écoute pour la prochaine partie
+        listenForPairing();
+    }
     // ─── DEFEAT ───────────────────────────────────────────────────────────
     function showDefeat(reason) {
         if (reason === 'timeout') {
