@@ -895,6 +895,7 @@
             html5QrCode.stop().catch(e => console.error(e));
         }
         document.getElementById('scannerContainer').classList.add('hidden');
+        listenForPairing();
         setTimeout(() => showScreen('defeatScreen'), 500);
     }
 
