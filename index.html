@@ -429,7 +429,8 @@
     let pairingChannel   = null;
     let adminChannel     = null;
     let forceEndChannel  = null;   // FIX 4 : stocké pour pouvoir être nettoyé
-    let waitingChannel   = null;   // FIX 2 : canal realtime pour le compteur d'attente
+    let waitingChannel   = null; // FIX 2 : canal realtime pour le compteur d'attente
+    let leaderboardChannel = null;
 
     // ─── HELPERS ──────────────────────────────────────────────────────────
     function showScreen(id) {
@@ -932,6 +933,7 @@
         const { data } = await supabaseClient.from('players')
             .select('name, points').eq('is_admin', false)
             .order('points', { ascending: false });
+            
         const list = document.getElementById('scoresList');
         list.innerHTML = '';
         if (!data || data.length === 0) {
@@ -950,14 +952,23 @@
             });
         }
         showScreen('leaderboardScreen');
-    }
 
+        // 🔴 NOUVEAU : Abonnement en temps réel pour actualiser en direct !
+        if (!leaderboardChannel) {
+            leaderboardChannel = supabaseClient.channel('leaderboard-watch')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'players' }, () => {
+                    // Dès qu'un joueur gagne un point en base de données, la liste se recharge
+                    loadLeaderboard();
+                }).subscribe();
+        }
+    }
     // ─── REPLAY ───────────────────────────────────────────────────────────
     async function resetGame() {
         // Arrêter le polling et nettoyer les canaux de jeu
         stopPairingListen();
         if (gameChannel)     { supabaseClient.removeChannel(gameChannel);     gameChannel = null; }
         if (forceEndChannel) { supabaseClient.removeChannel(forceEndChannel); forceEndChannel = null; }
+        if (leaderboardChannel) { supabaseClient.removeChannel(leaderboardChannel); leaderboardChannel = null; }
 
         await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId);
 
