@@ -397,7 +397,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
     // ─── CONFIG ───────────────────────────────────────────────────────────
-    const ADMIN_PASSWORD = "FBA9B17451E6B5555FC7353457B8A9F1DCF1430F1C1AA410A6B2AC440B12D998";
+    const ADMIN_PASSWORD_HASH = "FBA9B17451E6B5555FC7353457B8A9F1DCF1430F1C1AA410A6B2AC440B12D998";
     const SUPABASE_URL   = 'https://usyaqoqacryoyhzlvanj.supabase.co';
     const SUPABASE_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzeWFxb3FhY3J5b3loemx2YW5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0Njc4MTUsImV4cCI6MjA5NTA0MzgxNX0.jIBdiW8pP1vGAnNk2kFRmXDHct34RtnhkuUMNq6od8k';
 
@@ -431,6 +431,8 @@
     let forceEndChannel  = null;   // FIX 4 : stocké pour pouvoir être nettoyé
     let waitingChannel   = null; // FIX 2 : canal realtime pour le compteur d'attente
     let leaderboardChannel = null;
+    let isGameEnded      = false;
+    let forceEndInterval = null;
 async function sha256(message) {
     const msgBuffer = new TextEncoder().encode(message);                    
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -451,18 +453,6 @@ function escapeHTML(str) {
         }[tag] || tag)
     );
 }
-
-// Exemple de correction dans loadAdminPlayerList() :
-div.innerHTML = `
-    <p style="font-weight:700;">${i + 1}. ${escapeHTML(p.name)}</p>
-    <p style="font-size:12px;color:var(--muted);">Points : ${p.points || 0}</p>`;
-
-// Exemple de correction dans loadLeaderboard() :
-div.innerHTML = `
-    <div style="display:flex;align-items:center;">
-        <span class="rank">${i + 1}</span>
-        <p style="font-weight:700;">${escapeHTML(p.name)}</p>
-    </div>...`;
     
     function showScreen(id) {
         document.querySelectorAll('.container').forEach(s => s.classList.add('hidden'));
@@ -491,21 +481,16 @@ div.innerHTML = `
     
     if (!playerName) { showError('Gib deinen Namen ein!'); return; }
     clearError();
-
-    if (passInput) {
-        // On hache le mot de passe entré par l'utilisateur
-        const hashedInput = await sha256(passInput);
-        // On compare les deux empreintes
-        isAdmin = (hashedInput === ADMIN_PASSWORD_HASH);
-        
-        if(!isAdmin) {
-            showError('Faux mot de passe admin !');
-            return;
+    isAdmin = false;
+        if (passInput) {
+            const hashedInput = await sha256(passInput);
+            if (hashedInput === ADMIN_PASSWORD_HASH) {
+                isAdmin = true;
+            } else {
+                alert("Falsches Admin-Passwort. Du bist als normaler Spieler angemeldet.");
+                // isAdmin reste false, le code continue et connecte le joueur !
+            }
         }
-    } else {
-        isAdmin = false;
-    }
-
         try {
             await supabaseClient.from('players').delete().eq('name', playerName);
             const { data } = await supabaseClient.from('players').insert([{
@@ -573,6 +558,9 @@ function cleanupGameChannels() {
 
     // ─── ADMIN – LISTE JOUEURS ──────────────────────────────────────────────
     async function loadAdminPlayerList() {
+        div.innerHTML = `
+                <p style="font-weight:700;">${i + 1}. ${escapeHTML(p.name)}</p>
+                <p style="font-size:12px;color:var(--muted);">Points : ${p.points || 0}</p>`;
         const { data } = await supabaseClient.from('players')
             .select('*').eq('status', 'waiting').eq('is_admin', false)
             .order('created_at', { ascending: true });
@@ -595,6 +583,15 @@ function cleanupGameChannels() {
 
     // ─── ADMIN – PAIRES ACTIVES ──────────────────────────────────────────────
     async function loadAdminPairList() {
+        card.innerHTML = `
+                <div>
+                    <div class="names">
+                        <span class="status-dot"></span>
+                        ${p1 ? escapeHTML(p1.name) : '?'} <span class="vs">VS</span> ${p2 ? escapeHTML(p2.name) : '?'}
+                    </div>
+                    <div class="game-label">🌳 ${game ? game.name : 'Jeu inconnu'}</div>
+                </div>
+                <button class="btn-warning btn-sm" onclick="adminForceEndPair('${pair.id}')">⏹ Terminer</button>`;
         const { data: pairs } = await supabaseClient.from('pairs')
             .select('*').eq('status', 'active');
         const list = document.getElementById('adminPairList');
@@ -925,10 +922,7 @@ function cleanupGameChannels() {
         document.getElementById('victoryTime').textContent =
             `Du hast es in ${elapsed} Sekunden geschafft!`;
         setTimeout(() => showScreen('victoryScreen'), 500);
-
-        // 🔴 MODIFICATION 2 : On nettoie les canaux de la partie qui vient de se terminer
-        if (gameChannel)     { supabaseClient.removeChannel(gameChannel);     gameChannel = null; }
-        if (forceEndChannel) { supabaseClient.removeChannel(forceEndChannel); forceEndChannel = null; }
+        cleanupGameChannels();
         
         // 🔴 MODIFICATION 3 : On relance l'écoute pour la prochaine partie
         listenForPairing();
@@ -955,24 +949,20 @@ function cleanupGameChannels() {
 
     // ─── SUBSCRIBE TO SCORES ──────────────────────────────────────────────
     function subscribeToScores() {
-        if (payload.new.player_id !== playerId) {
-        if (!isGameEnded) {
-        isGameEnded = true;
-        // ... suite du code (showDefeat)
-            }
-        }        
-        if (gameChannel)     supabaseClient.removeChannel(gameChannel);
-        if (forceEndChannel) supabaseClient.removeChannel(forceEndChannel);  // FIX 4
+        // CORRECTION : Nettoyage propre au démarrage de la souscription
+        cleanupGameChannels();
 
         gameChannel = supabaseClient.channel('score-' + currentPair.id + '-' + Date.now())
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'scores' }, async (payload) => {
                 if (payload.new.pair_id !== currentPair.id) return;
+                
                 if (payload.new.player_id !== playerId) {
-                    if (!playerFinished) {
+                    // CORRECTION : Logique isGameEnded à l'intérieur du callback !
+                    if (!isGameEnded) {
+                        isGameEnded = true;
                         opponentFinished = true;
                         clearInterval(timerInterval);
                         document.getElementById('opponentBox').classList.add('finished');
-                        // FIX 4 : mettre à jour le statut du perdant
                         try {
                             await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId);
                         } catch(e) { console.error(e); }
@@ -981,8 +971,7 @@ function cleanupGameChannels() {
                 }
             }).subscribe();
 
-        let forceEndInterval = null;
-
+        // CORRECTION : Pas de 'let' ici, on utilise la globale !
         forceEndInterval = setInterval(async () => {
             if (playerFinished || opponentFinished) {
                 clearInterval(forceEndInterval);
@@ -997,14 +986,20 @@ function cleanupGameChannels() {
                 if (data && data.status === 'finished') {
                     clearInterval(timerInterval);
                     try { await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId); } catch(e) {}
-                   showDefeat('timeout');
+                    showDefeat('timeout');
                 }
             } catch (e) { console.error(e); }
-        }, 2000); // Vérifie toutes les 2 secondes
+        }, 2000); 
     }
 
     // ─── LEADERBOARD ──────────────────────────────────────────────────────
     async function loadLeaderboard() {
+        div.innerHTML = `
+                    <div style="display:flex;align-items:center;">
+                        <span class="rank">${i + 1}</span>
+                        <p style="font-weight:700;">${escapeHTML(p.name)}</p>
+                    </div>
+                    <p style="font-size:20px;font-weight:700;">${p.points} Pkt.</p>`;
         const { data } = await supabaseClient.from('players')
             .select('name, points')
             .eq('is_admin', false)
@@ -1050,7 +1045,7 @@ function cleanupGameChannels() {
 
         currentPair      = null;
         currentGame      = null;
-        let isGameEnded = false;
+        isGameEnded = false;
 
         document.getElementById('treePasswordInput').value = ''; // Vide le champ pour la nouvelle partie
         document.getElementById('passwordInputContainer').classList.remove('hidden');
