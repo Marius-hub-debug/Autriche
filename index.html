@@ -397,7 +397,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
     // ─── CONFIG ───────────────────────────────────────────────────────────
-    const ADMIN_PASSWORD_HASH = "FBA9B17451E6B5555FC7353457B8A9F1DCF1430F1C1AA410A6B2AC440B12D998";
+    const ADMIN_PASSWORD_HASH = "fba9b17451e6b5555fc7353457b8a9f1dcf1430f1c1aa410a6b2ac440b12d998";
     const SUPABASE_URL   = 'https://usyaqoqacryoyhzlvanj.supabase.co';
     const SUPABASE_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzeWFxb3FhY3J5b3loemx2YW5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0Njc4MTUsImV4cCI6MjA5NTA0MzgxNX0.jIBdiW8pP1vGAnNk2kFRmXDHct34RtnhkuUMNq6od8k';
 
@@ -487,8 +487,8 @@ function escapeHTML(str) {
             if (hashedInput === ADMIN_PASSWORD_HASH) {
                 isAdmin = true;
             } else {
-                alert("Falsches Admin-Passwort. Du bist als normaler Spieler angemeldet.");
-                // isAdmin reste false, le code continue et connecte le joueur !
+                showError('Falsches Admin-Passwort!');
+                return;
             }
         }
         try {
@@ -557,10 +557,7 @@ function cleanupGameChannels() {
     }
 
     // ─── ADMIN – LISTE JOUEURS ──────────────────────────────────────────────
-    async function loadAdminPlayerList() {
-        div.innerHTML = `
-                <p style="font-weight:700;">${i + 1}. ${escapeHTML(p.name)}</p>
-                <p style="font-size:12px;color:var(--muted);">Points : ${p.points || 0}</p>`;
+   async function loadAdminPlayerList() {
         const { data } = await supabaseClient.from('players')
             .select('*').eq('status', 'waiting').eq('is_admin', false)
             .order('created_at', { ascending: true });
@@ -574,24 +571,16 @@ function cleanupGameChannels() {
             const div = document.createElement('div');
             div.className = 'player-box';
             div.style.marginBottom = '10px';
+            // 🟢 escapeHTML est utilisé ICI, dans la boucle
             div.innerHTML = `
-                <p style="font-weight:700;">${i + 1}. ${p.name}</p>
+                <p style="font-weight:700;">${i + 1}. ${escapeHTML(p.name)}</p>
                 <p style="font-size:12px;color:var(--muted);">Points : ${p.points || 0}</p>`;
             list.appendChild(div);
         });
     }
 
     // ─── ADMIN – PAIRES ACTIVES ──────────────────────────────────────────────
-    async function loadAdminPairList() {
-        card.innerHTML = `
-                <div>
-                    <div class="names">
-                        <span class="status-dot"></span>
-                        ${p1 ? escapeHTML(p1.name) : '?'} <span class="vs">VS</span> ${p2 ? escapeHTML(p2.name) : '?'}
-                    </div>
-                    <div class="game-label">🌳 ${game ? game.name : 'Jeu inconnu'}</div>
-                </div>
-                <button class="btn-warning btn-sm" onclick="adminForceEndPair('${pair.id}')">⏹ Terminer</button>`;
+  async function loadAdminPairList() {
         const { data: pairs } = await supabaseClient.from('pairs')
             .select('*').eq('status', 'active');
         const list = document.getElementById('adminPairList');
@@ -609,12 +598,13 @@ function cleanupGameChannels() {
 
             const card = document.createElement('div');
             card.className = 'pair-card';
-            card.setAttribute('data-pair-id', pair.id);  // FIX 4 : identifiant pour retrait DOM immédiat
+            card.setAttribute('data-pair-id', pair.id);
+            // 🟢 escapeHTML est utilisé ICI
             card.innerHTML = `
                 <div>
                     <div class="names">
                         <span class="status-dot"></span>
-                        ${p1 ? p1.name : '?'} <span class="vs">VS</span> ${p2 ? p2.name : '?'}
+                        ${p1 ? escapeHTML(p1.name) : '?'} <span class="vs">VS</span> ${p2 ? escapeHTML(p2.name) : '?'}
                     </div>
                     <div class="game-label">🌳 ${game ? game.name : 'Jeu inconnu'}</div>
                 </div>
@@ -851,13 +841,19 @@ function cleanupGameChannels() {
     }
 
     // ─── TIMEOUT ──────────────────────────────────────────────────────────
-    async function handleTimeOut() {
+async function handleTimeOut() {
         if (isGameEnded) return;
-        isGameEnded = true;
-        if (playerFinished || opponentFinished) return;
-        isGameEnded = true;
+        
+        if (playerFinished || opponentFinished) {
+            // 🟢 Sécurité : on s'assure que les canaux sont fermés même si on coupe court
+            cleanupGameChannels(); 
+            return; 
+        }
+        
+        isGameEnded = true; // 🟢 Déclaré une seule fois
         cleanupGameChannels();
         opponentFinished = true;
+        
         try {
             await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId);
         } catch (err) { console.error(err); }
@@ -972,8 +968,9 @@ function cleanupGameChannels() {
             }).subscribe();
 
         // CORRECTION : Pas de 'let' ici, on utilise la globale !
-        forceEndInterval = setInterval(async () => {
-            if (playerFinished || opponentFinished) {
+            forceEndInterval = setInterval(async () => {
+            // 🟢 Vérifie isGameEnded au lieu de playerFinished || opponentFinished
+            if (isGameEnded) {
                 clearInterval(forceEndInterval);
                 return;
             }
@@ -982,7 +979,6 @@ function cleanupGameChannels() {
                     .select('status')
                     .eq('id', currentPair.id)
                     .single();
-            
                 if (data && data.status === 'finished') {
                     clearInterval(timerInterval);
                     try { await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId); } catch(e) {}
@@ -994,12 +990,6 @@ function cleanupGameChannels() {
 
     // ─── LEADERBOARD ──────────────────────────────────────────────────────
     async function loadLeaderboard() {
-        div.innerHTML = `
-                    <div style="display:flex;align-items:center;">
-                        <span class="rank">${i + 1}</span>
-                        <p style="font-weight:700;">${escapeHTML(p.name)}</p>
-                    </div>
-                    <p style="font-size:20px;font-weight:700;">${p.points} Pkt.</p>`;
         const { data } = await supabaseClient.from('players')
             .select('name, points')
             .eq('is_admin', false)
@@ -1046,6 +1036,8 @@ function cleanupGameChannels() {
         currentPair      = null;
         currentGame      = null;
         isGameEnded = false;
+        playerFinished   = false;  
+        opponentFinished = false;
 
         document.getElementById('treePasswordInput').value = ''; // Vide le champ pour la nouvelle partie
         document.getElementById('passwordInputContainer').classList.remove('hidden');
