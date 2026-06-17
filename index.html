@@ -433,6 +433,32 @@
     let leaderboardChannel = null;
 
     // ─── HELPERS ──────────────────────────────────────────────────────────
+    // Ajoute cette fonction au début de tes scripts
+function escapeHTML(str) {
+    if (!str) return '';
+    return str.replace(/[&<>'"]/g, 
+        tag => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            "'": '&#39;',
+            '"': '&quot;'
+        }[tag] || tag)
+    );
+}
+
+// Exemple de correction dans loadAdminPlayerList() :
+div.innerHTML = `
+    <p style="font-weight:700;">${i + 1}. ${escapeHTML(p.name)}</p>
+    <p style="font-size:12px;color:var(--muted);">Points : ${p.points || 0}</p>`;
+
+// Exemple de correction dans loadLeaderboard() :
+div.innerHTML = `
+    <div style="display:flex;align-items:center;">
+        <span class="rank">${i + 1}</span>
+        <p style="font-weight:700;">${escapeHTML(p.name)}</p>
+    </div>...`;
+    
     function showScreen(id) {
         document.querySelectorAll('.container').forEach(s => s.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
@@ -491,7 +517,12 @@
             showError('Verbindungsfehler. Bitte erneut versuchen.');
         }
     }
-
+function cleanupGameChannels() {
+    if (gameChannel)     { supabaseClient.removeChannel(gameChannel);     gameChannel = null; }
+    if (forceEndChannel) { supabaseClient.removeChannel(forceEndChannel); forceEndChannel = null; }
+    // Si tu passes au polling pour la fin forcée (voir plus bas) :
+    if (forceEndInterval) { clearInterval(forceEndInterval); forceEndInterval = null; }
+}
     // ─── WAITING COUNT ──────────────────────────────────────────────────────
     async function updateWaitingCount() {
         const { count } = await supabaseClient.from('players')
@@ -694,7 +725,9 @@
             const NULL_UUID = '00000000-0000-0000-0000-000000000000';
             await supabaseClient.from('scores').delete().neq('id', NULL_UUID);
             await supabaseClient.from('pairs').delete().neq('id', NULL_UUID);
-            await supabaseClient.from('players').update({ points: 0 }).neq('id', NULL_UUID);
+            await supabaseClient.from('players')
+                .update({ points: 0, status: 'waiting' }) // AJOUT du status
+                .neq('id', NULL_UUID);
             alert('Réinitialisé ! Tous les joueurs peuvent repartir de zéro.');
             refreshAdminCounts(); loadAdminPlayerList();
         } catch (err) { console.error(err); }
@@ -734,6 +767,10 @@
     }
 
     async function handlePairingDetected() {
+        if (waitingChannel) { 
+        supabaseClient.removeChannel(waitingChannel); 
+        waitingChannel = null; 
+        }
         const { data: pairData } = await supabaseClient.from('pairs')
             .select('*')
             .or(`player1_id.eq.${playerId},player2_id.eq.${playerId}`)
@@ -799,7 +836,11 @@
 
     // ─── TIMEOUT ──────────────────────────────────────────────────────────
     async function handleTimeOut() {
+        if (isGameEnded) return;
+        isGameEnded = true;
         if (playerFinished || opponentFinished) return;
+        isGameEnded = true;
+        cleanupGameChannels();
         opponentFinished = true;
         try {
             await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId);
@@ -836,6 +877,8 @@
     });
     // ─── FINISH ───────────────────────────────────────────────────────────
     async function handleFinish() {
+        if (isGameEnded) return;
+        isGameEnded = true;
         if (playerFinished || opponentFinished) return;
         playerFinished = true;
         clearInterval(timerInterval);
@@ -873,6 +916,7 @@
     }
     // ─── DEFEAT ───────────────────────────────────────────────────────────
     function showDefeat(reason) {
+        cleanupGameChannels();
         if (reason === 'timeout') {
             document.getElementById('defeatSubtitle').textContent  = 'Die Zeit ist abgelaufen.';
             document.getElementById('defeatBannerTitle').textContent = '⏰ Zeit abgelaufen!';
@@ -892,6 +936,12 @@
 
     // ─── SUBSCRIBE TO SCORES ──────────────────────────────────────────────
     function subscribeToScores() {
+        if (payload.new.player_id !== playerId) {
+        if (!isGameEnded) {
+        isGameEnded = true;
+        // ... suite du code (showDefeat)
+            }
+        }        
         if (gameChannel)     supabaseClient.removeChannel(gameChannel);
         if (forceEndChannel) supabaseClient.removeChannel(forceEndChannel);  // FIX 4
 
@@ -912,28 +962,35 @@
                 }
             }).subscribe();
 
-        // FIX 4 : canal stocké dans forceEndChannel pour nettoyage propre
-        forceEndChannel = supabaseClient.channel('pair-force-' + currentPair.id + '-' + Date.now())
-            .on('postgres_changes', {
-                event: 'UPDATE', schema: 'public', table: 'pairs',
-                filter: 'id=eq.' + currentPair.id
-            }, async (payload) => {
-                if (payload.new.status === 'finished' && !playerFinished && !opponentFinished) {
+        let forceEndInterval = null;
+
+        forceEndInterval = setInterval(async () => {
+            if (playerFinished || opponentFinished) {
+                clearInterval(forceEndInterval);
+                return;
+            }
+            try {
+                const { data } = await supabaseClient.from('pairs')
+                    .select('status')
+                    .eq('id', currentPair.id)
+                    .single();
+            
+                if (data && data.status === 'finished') {
                     clearInterval(timerInterval);
-                    try {
-                        await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId);
-                    } catch(e) { console.error(e); }
-                    showDefeat('timeout');
+                    try { await supabaseClient.from('players').update({ status: 'waiting' }).eq('id', playerId); } catch(e) {}
+                   showDefeat('timeout');
                 }
-            }).subscribe();
+            } catch (e) { console.error(e); }
+        }, 2000); // Vérifie toutes les 2 secondes
     }
 
     // ─── LEADERBOARD ──────────────────────────────────────────────────────
     async function loadLeaderboard() {
         const { data } = await supabaseClient.from('players')
-            .select('name, points').eq('is_admin', false)
-            .order('points', { ascending: false });
-            
+            .select('name, points')
+            .eq('is_admin', false)
+            .neq('name', 'Bot 🤖') // AJOUT : Filtre pour exclure le bot
+    .order('points', { ascending: false });
         const list = document.getElementById('scoresList');
         list.innerHTML = '';
         if (!data || data.length === 0) {
@@ -974,8 +1031,7 @@
 
         currentPair      = null;
         currentGame      = null;
-        playerFinished   = false;
-        opponentFinished = false;
+        let isGameEnded = false;
 
         document.getElementById('treePasswordInput').value = ''; // Vide le champ pour la nouvelle partie
         document.getElementById('passwordInputContainer').classList.remove('hidden');
@@ -984,7 +1040,9 @@
 
         showScreen('waitingScreen');
         updateWaitingCount();
+        subscribeWaitingCount();
         listenForPairing();  // FIX 1 : canal unique → la relance fonctionne
+        
     }
 
     // ─── CLEANUP ──────────────────────────────────────────────────────────
