@@ -397,7 +397,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
     // ─── CONFIG ───────────────────────────────────────────────────────────
-    const ADMIN_PASSWORD = "M.lefol";
+    const ADMIN_PASSWORD = "FBA9B17451E6B5555FC7353457B8A9F1DCF1430F1C1AA410A6B2AC440B12D998";
     const SUPABASE_URL   = 'https://usyaqoqacryoyhzlvanj.supabase.co';
     const SUPABASE_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzeWFxb3FhY3J5b3loemx2YW5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0Njc4MTUsImV4cCI6MjA5NTA0MzgxNX0.jIBdiW8pP1vGAnNk2kFRmXDHct34RtnhkuUMNq6od8k';
 
@@ -431,7 +431,12 @@
     let forceEndChannel  = null;   // FIX 4 : stocké pour pouvoir être nettoyé
     let waitingChannel   = null; // FIX 2 : canal realtime pour le compteur d'attente
     let leaderboardChannel = null;
-
+async function sha256(message) {
+    const msgBuffer = new TextEncoder().encode(message);                    
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
     // ─── HELPERS ──────────────────────────────────────────────────────────
     // Ajoute cette fonction au début de tes scripts
 function escapeHTML(str) {
@@ -482,10 +487,24 @@ div.innerHTML = `
     // ─── LOGIN ─────────────────────────────────────────────────────────────
     async function handleLogin() {
         playerName = document.getElementById('playerNameInput').value.trim();
-        const pass = document.getElementById('adminPasswordInput').value.trim();
-        if (!playerName) { showError('Gib deinen Namen ein!'); return; }
-        clearError();
-        isAdmin = (pass === ADMIN_PASSWORD);
+    const passInput = document.getElementById('adminPasswordInput').value.trim();
+    
+    if (!playerName) { showError('Gib deinen Namen ein!'); return; }
+    clearError();
+
+    if (passInput) {
+        // On hache le mot de passe entré par l'utilisateur
+        const hashedInput = await sha256(passInput);
+        // On compare les deux empreintes
+        isAdmin = (hashedInput === ADMIN_PASSWORD_HASH);
+        
+        if(!isAdmin) {
+            showError('Faux mot de passe admin !');
+            return;
+        }
+    } else {
+        isAdmin = false;
+    }
 
         try {
             await supabaseClient.from('players').delete().eq('name', playerName);
